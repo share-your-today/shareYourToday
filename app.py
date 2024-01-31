@@ -53,11 +53,18 @@ with app.app_context():
 def home():
     return render_template("index.html")
 
+@app.route('/login', methods=['GET','POST'])  
+def login():  
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET','POST'])  #겟, 포스트 메소드 둘다 사용
+def register():  
+    return render_template('register.html')
+
 @app.route("/board/")
 def board():
     board = Board.query.all()
     return render_template("board.html",data=board)
-
 @app.route("/board_detail/<int:board_id>/")
 def board_detail(board_id):
     board = Board.query.get(board_id)
