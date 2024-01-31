@@ -13,30 +13,31 @@ app.config['SQLALCHEMY_DATABASE_URI'] =\
 
 db = SQLAlchemy(app)
 class Member(db.Model):
-    user_id = db.Column(db.String, primary_key=True)
-    pwd = db.Column(db.String(100), nullable=False)
-    name = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.String(30), primary_key=True)
+    pwd = db.Column(db.String(150), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         return f'Member(user_id={self.user_id}, name={self.name})'
 
 class Board(db.Model):
-    board_id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    board_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(300), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow)
+    created_dttm = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_dttm = db.Column(db.DateTime, default=datetime.utcnow)
+    image_url = db.Column(db.String(300), nullable = True)
     user_id = db.Column(db.String, db.ForeignKey('member.user_id'), nullable=False)
     member = db.relationship('Member', backref=db.backref('boards', lazy=True))
 
     def __repr__(self):
         return f'Board(title={self.title}, content={self.content}, user_id={self.user_id})'
 
-class BoardReply(db.Model):
-    reply_id = db.Column(db.Integer, primary_key=True)
+class Board_Reply(db.Model):
+    reply_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
-    created_date = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_date = db.Column(db.DateTime, default=datetime.utcnow)
+    created_dttm = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_dttm = db.Column(db.DateTime, default=datetime.utcnow)
     board_id = db.Column(db.Integer, db.ForeignKey('board.board_id'), nullable=False)
     board = db.relationship('Board', backref=db.backref('replies', lazy=True))
     user_id = db.Column(db.String, db.ForeignKey('member.user_id'), nullable=False)
