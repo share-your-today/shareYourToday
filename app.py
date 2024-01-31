@@ -53,6 +53,17 @@ with app.app_context():
 def home():
     return render_template("index.html")
 
+@app.route("/board/")
+def board():
+    board = Board.query.all()
+    return render_template("board.html",data=board)
+
+@app.route("/board_detail/<int:board_id>/")
+def board_detail(board_id):
+    board = Board.query.get(board_id)
+    print(board.board_id)
+    return render_template("board_detail.html", data=board)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=8001)
