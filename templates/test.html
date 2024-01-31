@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        .backgroundGrey {
+            background-color: #f9fafb;
+        }
+
+        .wastamain {
+            margin: 0px auto;
+            width: 550px;
+            background-color: #fff;
+        }
+
+        .follower_container {
+            display: flex;
+            /* 가로로 배치되도록 설정 */
+            flex-direction: row;
+            /* 요소들을 가로로 배치 */
+            justify-content: center;
+            /* 가운데 정렬 */
+        }
+
+        .follower {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 4px;
+            background-color: #fff;
+            padding: 0 4px;
+            width: 56px;
+            height: 74px;
+        }
+
+
+
+        .followerImg {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            box-sizing: border-box;
+        }
+
+
+
+        .user_nickname {
+            margin-top: 8px;
+            width: 100%;
+            text-align: center;
+            color: #212529;
+            line-height: 18px;
+            font-size: 12px;
+            font-weight: 400;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .feed_container {
+            width: 100%;
+            max-height: 1000000px;
+        }
+
+        .feed_card_container {
+            display: inline-flex;
+            flex-direction: column;
+            margin: 0 0 24px;
+            width: 100%;
+        }
+
+        .card_header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            width: 100%;
+            height: 72px;
+        }
+
+        .card_header_left {
+            display: inline-flex;
+            position: relative;
+            flex-direction: row;
+            align-items: center;
+            width: 400px;
+        }
+
+        .card_header_title {
+            display: inline-flex;
+            flex-direction: column;
+            margin-left: 8px;
+            width: 100%;
+        }
+
+        .reviewerImg {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+        }
+
+        .card_header_sub {
+            display: flex;
+            font-size: 12px;
+        }
+
+        .card_header_seperator {
+            margin-right: 8px;
+            border-right: 1px solid #e9ecef;
+            padding-left: 8px;
+            width: 1px;
+            height: 18px;
+        }
+
+        .btn-custom {
+            background-color: transparent;
+            border-color: #00b2b2;
+            color: #00b2b2;
+            transition: background-color 0.3s;
+            font-size: 12px;
+        }
+
+        .btn-custom:hover {
+            background-color: rgb(234, 248, 249);
+            border-color: #00b2b2;
+            color: #00b2b2;
+        }
+
+
+
+        .btn-custom-del {
+            background-color: transparent;
+            border-color: #FF3333;
+            color: #FF3333;
+            transition: background-color 0.3s;
+            font-size: 12px;
+        }
+
+        .btn-custom-del:hover {
+            background-color: rgb(234, 248, 249);
+            border-color: #FF3333;
+            color: #FF3333;
+        }
+
+        .morePoint {
+            width: 25px;
+            height: 25px;
+        }
+
+        .imgBtn {
+            display: inline-block;
+            background-color: transparent;
+            /* 배경을 투명하게 설정 */
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card_content_wrapper {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            max-width: 100%;
+            /* 이미지의 최대 너비를 부모 요소에 맞게 설정 */
+            height: auto;
+            /* 높이를 자동 조정하여 비율 유지 */
+        }
+
+        .card_content {
+            margin: 3px;
+            max-width: 100%;
+            /* 이미지의 최대 너비를 부모 요소에 맞게 설정 */
+            height: auto;
+            /* 높이를 자동 조정하여 비율 유지 */
+        }
+
+        .card_content_img {
+            width: 100%;
+            height: auto;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            object-fit: contain;
+        }
+
+        .card_content_review {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            padding: 0 16px 16px;
+            font-size: 13px;
+        }
+
+        .review_item {
+
+            display: flex;
+
+            align-items: center;
+
+            padding: 6px;
+
+            width: 100%;
+
+        }
+
+        .item_poster {
+
+            position: static;
+
+            transform: none;
+
+            border-radius: 8px;
+
+            width: 70px;
+
+            height: 70px;
+
+            object-fit: cover;
+
+            margin-bottom: 15px;
+
+        }
+
+        .item_titles {
+
+            display: flex;
+
+            flex-direction: column;
+
+            padding-left: 8px;
+
+            width: 100%;
+
+        }
+
+        .item_category {
+
+            margin-bottom: 4px;
+
+            line-height: 14px;
+
+            font-size: 10px;
+
+            font-weight: 500;
+
+        }
+
+        .category_badge {
+
+            margin-top: 5px;
+
+            border: solid 1px #f2f4f6;
+
+            background-color: #f2f4f6;
+
+            color: #495057;
+
+        }
+
+        .item_title {
+
+            line-height: 18px;
+
+            font-size: 14px;
+
+            font-weight: 400;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: normal;
+
+            min-height: 36px;
+
+        }
+
+        .item_subtitle {
+
+            font-size: 11px;
+
+            font-weight: 200;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: normal;
+
+            min-height: 36px;
+
+            color: grey;
+
+        }
+
+        .card_header_act {
+
+            font-size: 14px;
+
+        }
+
+        .card_header_time {
+
+            color: #adb5bd;
+
+        }
+
+        .follower.selected .followerImg {
+
+            border: 3px solid #00b2b2;
+            /* 민트색 테두리 */
+
+        }
+
+
+
+        .follower.not-selected {
+
+            opacity: .5;
+            /* 반투명 */
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="backgroundGrey">
+
+        <div class="row">
+            <div class="wastamain">
+                <div style="height: 50px;"></div>
+                <input type="hidden" ref="id" value="${sessionScope.id }">
+                <div class="feed_container">
+                    <div class="feed_card_container">
+                        <div class="card_content_wrapper">
+                            <div class="card_content">
+                                <a :href="'../fund/fund_detail.do?wfno='+rvo.wfno">
+                                    <template v-if="rvo.imgname!=null">
+                                        <b-carousel controls background="white">
+                                            <b-carousel-slide v-for="(image, index) in rvo.imgname.split('^')"
+                                                :key="index" :img-src="'../reviewImg/' + image">
+                                            </b-carousel-slide>
+                                        </b-carousel>
+                                    </template>
+                                    <img class="card_content_img" :src="rvo.mainimg"
+                                        v-if="rvo.imgname==null && rvo.mainimg.startsWith('https')">
+                                    <img class="card_content_img" :src="'../Fundimages/'+rvo.mainimg"
+                                        v-if="rvo.imgname==null && !rvo.mainimg.startsWith('https')">
+                                </a>
+                                <hr>
+                                <div class="card_content_review">
+                                    <p>{{rvo.content}}</p>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+
+</html>
