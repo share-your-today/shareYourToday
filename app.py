@@ -7,48 +7,49 @@ from models import db,  Member, Board, Board_Reply
 from datetime import datetime
 
 app = Flask(__name__)
-# DB 연결 코드 만들어야 함
+# DB 연결 설정 
 
-basedir = os.path.abspath(os.path.dirname(__file__))  # 지금 현재 위치
+basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로
 app.config['SQLALCHEMY_DATABASE_URI'] =\
-        'sqlite:///' + os.path.join(basedir, 'database.db')
+        'sqlite:///' + os.path.join(basedir, 'database.db') #SQLite 데이터베이스 설정
 
 
 @app.route("/")
 def home():
+    #세연에서 사용자 이름을 가져옴, 없으면 None
     name = session.get('name', None)
     if name is None:
-        return redirect('/login')
-    return render_template("index.html",name=name)
+        return redirect('/login') #로그인하지 않은 사용자는 로그인 페이지로 리디렉션
+    return render_template("index.html",name=name) #로그인한 사용자에게 메잊 페이지(index.html) 표시
 
 @app.route('/login', methods=['GET','POST'])  
 def login():  
     form = LoginForm() #로그인 폼 생성
-    if form.validate_on_submit(): #유효성 검사
+    if form.validate_on_submit(): #폼 데이터의 유효성 검사
         session.clear()
         user= Member.query.filter_by(user_id=form.data.get('user_id')).first()
         if user:
+            #사용자 인증 성공시 세션에 사용자 정보 저장
             session['user_id'] = user.user_id
-            session['name'] = user.name  #form에서 가져온 userid를 session에 저장
-            return redirect('/') #로그인에 성공하면 홈화면으로 redirect
+            session['name'] = user.name  
+            return redirect('/') 
         else:
-            #사용자가 없을 떄의 처리
+            #로그인 실패시 처리
             pass
     return render_template('login.html', form=form)
 
-@app.route('/register', methods=['GET','POST'])  #겟, 포스트 메소드 둘다 사용
-def register():   #get 요청 단순히 페이지 표시 post요청 회원가입-등록을 눌렀을때 정보 가져오는것
+@app.route('/register', methods=['GET','POST'])  
+def register(): 
     form = RegisterForm()
-    if form.validate_on_submit(): # POST검사의 유효성검사가 정상적으로 되었는지 확인할 수 있다. 입력 안한것들이 있는지 확인됨.
-        #비밀번호 = 비밀번호 확인 -> EqulaTo
+    if form.validate_on_submit(): 
         try:
-            member = Member()  #models.py에 있는 Fcuser 
+            member = Member()  # Menber 모델 객체 생성
             member.user_id = form.data.get('user_id')
             member.name = form.data.get('name')
             member.pwd = form.data.get('pwd')
-            db.session.add(member)  # id, name 변수에 넣은 회원정보 DB에 저장
-            db.session.commit()  #커밋
-            return "가입 완료" #post요청일시는 '/'주소로 이동. (회원가입 완료시 화면이동)
+            db.session.add(member)  #DB에 사용자 정보 저장
+            db.session.commit()  #DB 변경사항 커밋
+            return "가입 완료"  #회원가입 완료시 반환되는 메시지
         except Exception as e:
             print("데이터베이스 저장 중 오류 발생: ",str(e))
             return "데이터베이스 저장 오류" +str(e)
@@ -102,20 +103,18 @@ def board_update(board_id):
 
 
 if __name__ == "__main__":
-    basedir = os.path.abspath(os.path.dirname(__file__)) #db파일을 절대경로로 생성
-    dbfile = os.path.join(basedir, 'db.sqlite')#db파일을 절대경로로 생성
+    basedir = os.path.abspath(os.path.dirname(__file__)) #현재 파일의 절대 경로
+    dbfile = os.path.join(basedir, 'db.sqlite')#데이터베이스 파일 경로 설정
 
+    #애플리케이션 설정
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbfile   
-#sqlite를 사용함. (만약 mysql을 사용한다면, id password 등... 더 필요한게많다.)
-    app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True 
-#사용자 요청의 끝마다 커밋(데이터베이스에 저장,수정,삭제등의 동작을 쌓아놨던 것들의 실행명령)을 한다.
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
-#수정사항에 대한 track을 하지 않는다. True로 한다면 warning 메시지유발
-    app.config['SECRET_KEY'] = 'wcsfeufhwiquehfdx'
-    app.config['SESSION_PERMANENT'] = False
+    app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True #요청 종료 시 자동 커밋
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  #수정사항 추적 비활성화
+    app.config['SECRET_KEY'] = 'wcsfeufhwiquehfdx' # CSRF 및 세션을 위한 비밀 키
+    app.config['SESSION_PERMANENT'] = False 
 
 
     db.init_app(app)
     with app.app_context():
-        db.create_all()
-    app.run(debug=True, port=8001)
+        db.create_all() #DB 초기화
+    app.run(debug=True, port=8001) #디버그 모드로 서버 실행, 포트 8001

@@ -101,8 +101,7 @@
                   {{form.user_id(class="form-control", placeholder="아이디")}}
                 </div>
                 <div class="form-group">
-                  {{form.pwd.label("비밀번호")}} {%if
-                  form.pwd.errors%}
+                  {{form.pwd.label("비밀번호")}} {%if form.pwd.errors%}
                   <!-- 로그인 실패시 errors/ password필드의 모든 에러를 갖고있다. -->
                   {{form.pwd.errors.0}}
                   <!--0 : 첫번째 에러메시지를 출력 하겠다 라는 뜻  -->
@@ -110,6 +109,13 @@
                   placeholder="비밀번호")}}
                 </div>
                 <button type="submit" class="btn btn-primary">로그인</button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="location.href='/register'"
+                >
+                  회원가입
+                </button>
               </form>
             </div>
           </div>
