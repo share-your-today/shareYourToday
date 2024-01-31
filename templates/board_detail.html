@@ -182,7 +182,7 @@
                         </div>
                         <div class="card_header_right">
                             <!-- 수정 버튼 여기 있습니다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-                            <button class="btn btn-custom">수정</button>
+                            <button class="btn btn-custom"  data-bs-toggle="modal" data-bs-target="#editModal">수정</button>
                         </div>
                     </section>
                     <div class="card_content_wrapper">
@@ -202,6 +202,36 @@
 
     </div>
 
+    <!-- 수정 모달 -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">오늘의 일기를 써봐요</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('board_update',board_id=data.board_id )}}" method="POST">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">제목</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ data.title }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="form-label">일기내용</label>
+                            <textarea class="form-control" id="content" name="content">{{ data.content }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image_url" class="form-label">사진 주소</label>
+                            <!-- board 객체의 image_url 속성으로 value를 설정 -->
+                            <input type="text" class="form-control" id="image_url" name="image_url"
+                                value="{{ data.image_url }}">
+                        </div>
+                        <button type="submit" class="btn btn-danger">수정하기</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="container">
