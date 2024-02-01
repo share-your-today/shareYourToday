@@ -62,7 +62,12 @@ def board():
 @app.route("/board_detail/<int:board_id>/")
 def board_detail(board_id):
     board = Board.query.get(board_id)
-    return render_template("board_detail.html", data=board)
+    reply = Board_Reply.query.filter_by(board_id=board_id).all()
+    data = {
+        'board': board,
+        'reply': reply
+    }
+    return render_template("board_detail.html", data=data)
 
 
 @app.route("/board_create")
