@@ -1,0 +1,19 @@
+var socket = io.connect("http://" + document.domain + ":" + location.port + "/chat");
+
+            socket.on('connect', function(){
+                socket.emit('joined',{});
+            
+                socket.on('joined', function (data) {
+                    console.log('joined');
+                    $('#chat_area').val($('#chat_area').val() + data + '\n');
+                });
+
+                socket.on('left', function (data) {
+                    console.log('left');
+                    $('#chat_area').val($('#chat_area').val() + data + '\n');
+                });
+
+                socket.on('send_msg', function (data) {
+                    $('#chat_area').val($('#chat_area').val() + data + '\n');
+                });
+            });
