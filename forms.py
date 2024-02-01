@@ -23,4 +23,3 @@ class LoginForm(FlaskForm):
                 raise ValueError('Wrong password')
     user_id = StringField('user_id', validators=[DataRequired()])
     pwd = PasswordField('pwd', validators=[DataRequired(), UserPassword()]) 
-   

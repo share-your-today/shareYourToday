@@ -13,9 +13,10 @@ app = Flask(__name__)
 def home():
     #세연에서 사용자 이름을 가져옴, 없으면 None
     name = session.get('name', None)
+    user_id=session.get('user_id',None)
     if name is None:
         return redirect('/login') #로그인하지 않은 사용자는 로그인 페이지로 리디렉션
-    return render_template("index.html",name=name) #로그인한 사용자에게 메잊 페이지(index.html) 표시
+    return render_template("index.html",name=name,user_id=user_id) #로그인한 사용자에게 메잊 페이지(index.html) 표시
 
 @app.route('/login', methods=['GET','POST'])  
 def login():  
