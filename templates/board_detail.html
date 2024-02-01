@@ -1,85 +1,86 @@
-<!Doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bootstrap demo</title>
     <style>
-        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+      @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
 
-        .background-banner {
-            background-image: linear-gradient(45deg,
-                    rgb(51 43 43 / 75%),
-                    rgb(20 19 20 / 61%)), url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
-            max-height: 100%;
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+      .background-banner {
+        background-image: linear-gradient(
+            45deg,
+            rgb(51 43 43 / 75%),
+            rgb(20 19 20 / 61%)
+          ),
+          url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
+        max-height: 100%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
 
-        .container1 {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            /* 높이를 화면 전체 높이로 설정하여 세로 중앙 정렬 */
-        }
+      .container1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        /* 높이를 화면 전체 높이로 설정하여 세로 중앙 정렬 */
+      }
 
-        .detailImg {
-            max-width: 800px;
-            width: 100%;
-            /* 가로 길이를 100%로 유지 */
-            height: auto;
-            /* 세로 비율 유지 */
-            object-fit: contain;
-            /* 이미지를 요소에 맞게 채우되, 비율을 유지하면서 전체가 나오도록 */
-        }
+      .detailImg {
+        max-width: 800px;
+        width: 100%;
+        /* 가로 길이를 100%로 유지 */
+        height: auto;
+        /* 세로 비율 유지 */
+        object-fit: contain;
+        /* 이미지를 요소에 맞게 채우되, 비율을 유지하면서 전체가 나오도록 */
+      }
 
+      /* css */
 
-        /* css */
+      .container2 {
+        margin: 0px auto;
+        width: 800px;
+        background-color: #fff;
+      }
 
-        .container2 {
-            margin: 0px auto;
-            width: 800px;
-            background-color: #fff;
-        }
+      .feed_container {
+        width: 100%;
+        max-height: 1000000px;
+      }
 
-        .feed_container {
-            width: 100%;
-            max-height: 1000000px;
-        }
+      .feed_card_container {
+        display: inline-flex;
+        flex-direction: column;
+        margin: 0 0 24px;
+        width: 100%;
+      }
 
-        .feed_card_container {
-            display: inline-flex;
-            flex-direction: column;
-            margin: 0 0 24px;
-            width: 100%;
-        }
+      .card_content_wrapper {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        max-width: 100%;
+        height: auto;
+      }
 
-        .card_content_wrapper {
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            max-width: 100%;
-            height: auto;
-        }
+      .card_content {
+        margin: 3px;
+        max-width: 100%;
+        /* 이미지의 최대 너비를 부모 요소에 맞게 설정 */
+        height: auto;
+        /* 높이를 자동 조정하여 비율 유지 */
+      }
 
-        .card_content {
-            margin: 3px;
-            max-width: 100%;
-            /* 이미지의 최대 너비를 부모 요소에 맞게 설정 */
-            height: auto;
-            /* 높이를 자동 조정하여 비율 유지 */
-        }
-
-        .card_content_img {
-            width: 100%;
-            height: auto;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            object-fit: contain;
-        }
+      .card_content_img {
+        width: 100%;
+        height: auto;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        object-fit: contain;
+      }
 
         .card_content_review {
             display: flex;
@@ -97,48 +98,46 @@
             font-size: 18px;
         }
 
-        .card_header {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 0;
-            width: 100%;
-            height: 72px;
-        }
+      .card_header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        width: 100%;
+        height: 72px;
+      }
 
-        .card_header_left {
-            display: inline-flex;
-            position: relative;
-            flex-direction: row;
-            align-items: center;
-            width: 400px;
-        }
+      .card_header_left {
+        display: inline-flex;
+        position: relative;
+        flex-direction: row;
+        align-items: center;
+        width: 400px;
+      }
 
-        .card_header_title {
-            display: inline-flex;
-            flex-direction: column;
-            margin-left: 8px;
-            width: 100%;
-        }
+      .card_header_title {
+        display: inline-flex;
+        flex-direction: column;
+        margin-left: 8px;
+        width: 100%;
+      }
 
-        .reviewerImg {
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            margin-left: 20px;
-        }
+      .reviewerImg {
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        margin-left: 20px;
+      }
 
-        .card_header_sub {
-            display: flex;
-            font-size: 12px;
-        }
+      .card_header_sub {
+        display: flex;
+        font-size: 12px;
+      }
 
-        .card_header_time {
-
-            color: #adb5bd;
-
-        }
+      .card_header_time {
+        color: #adb5bd;
+      }
 
 
         .reply_header {
@@ -189,60 +188,96 @@
             margin-right: 20px;
         }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body data-bs-theme="dark">
+  <body data-bs-theme="dark">
     <div class="background-banner">
-        <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
-            <div class="ms-3">
-                <img src="{{ url_for('static', filename='logo.png') }}" width="130" height="130" alt="">
-            </div>
-            <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </div>
-            </nav>
+      <nav
+        class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between"
+        data-bs-theme="dark"
+      >
+        <div class="ms-3">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            width="130"
+            height="130"
+            alt=""
+          />
+        </div>
+        <nav class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          </div>
         </nav>
-        <div class="container2">
-            <div class="feed_container">
-                <div class="feed_card_container">
-                    <section class="card_header">
-                        <div class="card_header_left">
-                            <a href="#">
-                                <img class="reviewerImg"
-                                    src="data:image/png;base64,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">
-                            </a>
-                            <div class="card_header_title">
-                                <div class="card_header_act">
-                                    <div><strong>{{ data.board.user_id }}</strong> 님이 글을 남겼어요.</div>
-                                </div>
-                                <div class="card_header_sub">
-                                    <span class="card_header_time">{{ data.board.created_dttm.strftime('%Y.%m.%d') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card_header_right">
-                            <!-- 수정 버튼 여기 있습니다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-                            <button class="btn btn-custom">수정</button>
-                        </div>
-                    </section>
-                    <div class="card_content_wrapper">
-                        <div class="card_content">
-                            <img class="card_content_img"
-                                src="{% if data.board.image_url %}{{ data.board.image_url }}{% else %}/static/java.png{% endif %}">
-                            <hr>
-                            <div class="card_content_review">
-                                <h4>{{ data.board.title }}</h4>
-                                <p>{{ data.board.content }}</p>
-                            </div>
-                        </div>
+      </nav>
+      <div class="container2">
+        <div class="feed_container">
+          <div class="feed_card_container">
+            <section class="card_header">
+              <div class="card_header_left">
+                <a href="#">
+                  <img
+                    class="reviewerImg"
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAflBMVEX///8AAAD09PT4+Pjt7e38/PzIyMjl5eWtra339/e+vr6zs7Pf39+np6fw8PDBwcFOTk54eHgVFRUhISHY2Nhra2tjY2MmJiZTU1OCgoIZGRlFRUWPj49eXl6cnJw+Pj4zMzN6enouLi6fn5+GhoaUlJTR0dEODg5BQUFhYWE0skWYAAAFmElEQVR4nO2daVPjMAyGca5elN4nvVJKgf//B5dsKZDESWxZiRRGz8fdnR29Y8fW6T48CIIgCIIgCIIgCIIgCIIgCIIgCIIgCIKgJ/RCahNqIugfFkf1xXa8GV7/ktJgMNmqPM+7q09tGgZhf69R98V5M6e2z5nDrFjfbSX71Ca64B8q5P1n2l6Ng6r1+17HiNpUEEHJ95dj0sIzZ2ChL9mqrVvGjZ3AT3bUJlvhra0FKvXRIh/AO1br0XD0qA03JTA9Q7NsA2rTzfBWQIFKzVohMXwGC1Tq1IaNunQQqNSY2vxqjBy1EibUAqq4OgpUakAtoZwQfsp806EWUYq9K5OH9afovkcThtQyShijKFR8r4w+jkC1oRZSiC7fBIKra4O1hErF1FIKcHHXMvBcxDmeQPVCLUZLjKjwyDEa7k0RFSqOmeIIUyDLrE2MqnBGLUcDqkCO/ncHWSG/IMoyA1wJv0g4RlZ4phaUA5YiLYHdjYgtUD1SK8qAfdAoxa1Ug+mU3hhRS8qA69EkdKklZRihK+QWXuArfKWWlAH7wuenEC+Dcefv71JuWVP8s5Rblw1Otvs33G58fJ+GXR4DXSG7hCJCWS3FllpQjgmywjW1oBxdZIUHakE5sIOLK7WgPMgKqeVowP0QF9RyNOD6bdzi3wQf2s2mY9qjlqMDow/jzoVajBbM05Rbou0Lm8bucvbUUgrAW0SmS4i3iByvihtYIRS7sOKHHYpAbvmL3/hnBIHP1CpKwUhm8Kv+pnh1Fsiv+JvB9Tzl27V3x3crlS6p7TcAPE+SMGZX+dURvIEF8j5Gfwigebd1K1YwIYD1YS5aI/DhIYQMzvDLrpViPTrzxq1OUUlkd6QunqgNNuAp3Vvg2STfMqW0LsfoItrnruvI1A/fZY6Yz6/4g9mm9YY3Mdl2u6HJVr1kN+ji/x+vhnwGS4LX7zs+G533uqdyeedDbkMu7n/3tuOxWf1U2Ju/tK+LvK47kyj3z8PUGPiF/iWCMHstzDThXRRrvJzTTvepdbL7+kDsBgw0pmsDvOD6Eu/Hx9VqdX5eLy+Dq/520LTlzCgDxo7+YYG4MCUfep5Xkq8PY+3/tyZLLhbmnbawo35UOBlGM5vwWHbbre2TLZ2y7MCZoDPjpcSehI2dxk5VXadpv9wzSMdMzD+fRwMPb99owc2wQrE2Owb7hi+hNLhTLfouNlG57+VFsfl/1ljb8MXcpk+my+FVr7I3Hy7tBt4aKpyWeGGFKt8n3dH8R6c3H3Un74Cx4SaqUr7jRLrjlOK4dkcV+HwQHnU/RORXBEMNcKp1FXv0Aj8l1ngx+ojz6A6817eKkDfK6qC2zkzsFlI4NY1f4hTpcaglnMKfinGhhsD/kVpTBvy4H/XFBATQO90BzmjNILuo2H3qGKDGUvgTMRhgNt4gvXCFDOKzZ0NqLQWgNcA9USspBKusyu8cvYN0nuIPT+KBU0eljurLeMcQyMsfzYLhn8J7uJpg6i6wqj5BjfuNwc3jzuK8iBwd0jSO7mnIIblWzsmt0I//VAI+boN8eKNM9eE0JMUzasriEkXZ1dGocEm8UdtuCFwgZ5/7N3D/m2/YlAYcROG+uVoj4LnotmxS+DaNqQ03Bjgs1QKP7Q7Qc2vHdX8DdulzzSHqgAUYfAqi1cBKpmi/A9AAoKej+eaBdUC6bPDfCawTSJDIPQWVBvLK4ge10VZA5ocxH9SpH8hRQ22zJfYC2+TRJNh7Ne0JLG7YhxdtyCP+xv664J/sTmPvmXLqYjPBPuHWJr87wf4notx+irJ57LNRXLplTbHP7bdNoX3fMM82qGLsG6T+vsKY2mRL7M9S/J/kqBfA6J77q11NAvolhX6LMsLgR/i9dgCVJwiCIAiCIAiCIAiCIAiCIAiCIAiCIAjM+AcgQGQRhEXiawAAAABJRU5ErkJggg=="
+                  />
+                </a>
+                <div class="card_header_title">
+                  <div class="card_header_act">
+                    <div>
+                      <strong>{{ data.board.user_id }}</strong> 님이 글을 남겼어요.
                     </div>
+                  </div>
+                  <div class="card_header_sub">
+                    <span class="card_header_time"
+                      >{{ data.board.created_dttm.strftime('%Y.%m.%d') }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="card_header_right">
+                <!-- 수정 버튼 여기 있습니다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                <button
+                  class="btn btn-custom"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editModal"
+                >
+                  수정
+                </button>
+              </div>
+            </section>
+            <div class="card_content_wrapper">
+              <div class="card_content">
+                <img
+                  class="card_content_img"
+                  src="{% if data.board.image_url %}{{ data.board.image_url }}{% else %}/static/java.png{% endif %}"
+                />
+                <hr />
+                <div class="card_content_review">
+                  <h4>{{ data.board.title }}</h4>
+                  <p>{{ data.board.content }}</p>
+                </div>
+              </div>
+            </div>
 
                     <!-- 댓글 등록 및 출력 부분 -->
                     {% for reply in data.reply %}
@@ -265,24 +300,83 @@
                     <hr>
                     {% endfor %}
 
-                </div>
-            </div>
+          </div>
         </div>
-
+      </div>
     </div>
 
-
+    <!-- 수정 모달 -->
+    <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              오늘의 일기를 써봐요
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form
+              action="{{ url_for('board_update',board_id=data.board_id )}}"
+              method="POST"
+            >
+              <div class="mb-3">
+                <label for="title" class="form-label">제목</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  value="{{ data.title }}"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="content" class="form-label">일기내용</label>
+                <textarea class="form-control" id="content" name="content">
+{{ data.content }}</textarea
+                >
+              </div>
+              <div class="mb-3">
+                <label for="image_url" class="form-label">사진 주소</label>
+                <!-- board 객체의 image_url 속성으로 value를 설정 -->
+                <input
+                  type="text"
+                  class="form-control"
+                  id="image_url"
+                  name="image_url"
+                  value="{{ data.image_url }}"
+                />
+              </div>
+              <button type="submit" class="btn btn-danger">수정하기</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="container">
-        <footer>
-            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-            </div>
-        </footer>
+      <footer>
+        <div
+          class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
+        ></div>
+      </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous"></script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

@@ -216,6 +216,55 @@
             </div>
         </div>
 
+        <!-- 일기 추가 모달 -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">오늘의 일기를 써봐요</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('board_create') }}" method="GET">
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">제목</label>
+                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                    name="title">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label">일기내용</label>
+                                <textarea class="form-control" aria-label="With textarea" name="content"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPassword1" class="form-label">사진 주소</label>
+                                <input type="text" class="form-control" id="exampleInputPassword1" name="image_url">
+                            </div>
+                            <button type="submit" class="btn btn-danger">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4 mx-auto w-75 pb-5">
+            {% for board in data %}
+            <div class="col">
+                <div class="card h-100">
+                    <p>{{ board.user_id }}</p>
+                    <img src="{% if board.image_url %}{{ board.image_url }}{% else %}/static/java.png{% endif %}"
+                        class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ board.title }}</h5>
+                        <p class="card-text">{{ board.content }}</p>
+                        <p class="card-text">{{ board.created_dttm.strftime('%Y.%m.%d') }}</p>
+                        <a href="{{ url_for('board_detail', board_id=board.board_id) }}"
+                            class="btn btn-primary">상세보기</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
         <div class="container2">
             {% for board in data %}
             <div class="feed_container">
