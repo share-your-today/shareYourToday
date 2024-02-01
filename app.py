@@ -54,7 +54,7 @@ def register():
 
 @app.route("/board/")
 def board():
-    board = Board.query.all()
+    board = Board.query.order_by(Board.created_dttm.desc()).all()
     return render_template("board.html",data=board)
 
 
