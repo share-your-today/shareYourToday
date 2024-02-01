@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
 import time
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, BoardForm
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 from models import db, Member, Board, Board_Reply, Message
@@ -33,7 +33,7 @@ def home():
     return redirect('/board')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     fail_count = 0
@@ -59,22 +59,22 @@ def login():
     return render_template('login.html', form=form, fail_count=fail_count)
 
 
-
-@app.route('/logout', methods=['GET'])
+@app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return redirect('/login')
 
-
-@app.route('/register', methods=['GET', 'POST'])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
-    if request.method == 'POST' and form.validate():
+    if request.method == "POST" and form.validate():
         user_id = form.user_id.data
         name = form.name.data
         pwd = form.pwd.data
-        
+
         if Member.query.filter_by(user_id=user_id).first() is not None:
+            flash("이미 존재하는 사용자 아이디입니다.")
+            return redirect(url_for("register"))
             flash('이미 존재하는 사용자 아이디입니다.')
             return redirect(url_for('register'))
 
@@ -91,27 +91,35 @@ def register():
             return redirect(url_for('board'))
         except Exception as e:
             db.session.rollback()
-            flash('데이터베이스 저장 중 오류가 발생했습니다.')
-            app.logger.error('Error on registration: %s', str(e))
+            flash("데이터베이스 저장 중 오류가 발생했습니다.")
+            app.logger.error("Error on registration: %s", str(e))
     else:
         for field, errors in form.errors.items():
             for error in errors:
                 flash(error)
-    return render_template('register.html', form=form)
+    return render_template("register.html", form=form)
+
 
 
 @app.route("/board/")
 def board():
     name = session.get("name", None)
     user_id = session.get("user_id", None)
+    form = BoardForm()  # BoardForm 객체를 생성합니다.
+
     board = Board.query.order_by(Board.created_dttm.desc()).all()
-    return render_template("board.html",data=board, name=name, user_id=user_id)
+    return render_template("board.html", data=board, name=name, user_id=user_id, form=form)
+
 
 @app.route("/user_posts/<user_id>/")
 def user_posts(user_id):
     name = session.get("name", None)
     if user_id:
-        user_posts = Board.query.filter_by(user_id=user_id).order_by(Board.created_dttm.desc()).all()
+        user_posts = (
+            Board.query.filter_by(user_id=user_id)
+            .order_by(Board.created_dttm.desc())
+            .all()
+        )
         return render_template("board.html", data=user_posts, user_id=user_id, name=name)
     else:
         return render_template("error.html", message="유저 아이디가 유효하지 않습니다.")
@@ -127,23 +135,32 @@ def board_detail(board_id):
     return render_template("board_detail.html", data=data, name=name, user_id=user_id)
 
 
-@app.route("/board_create")
+@app.route("/board_create", methods=["POST", "GET"])
 def board_create():
     user_id = session.get("user_id", None)
-    title_receive = request.args.get("title")
-    content_receive = request.args.get("content")
-    image_receive = request.args.get("image_url")
+    form = BoardForm()
 
-    board = Board(
-        title=title_receive,
-        content=content_receive,
-        image_url=image_receive,
-        user_id=user_id,
-    )
-    db.session.add(board)
-    db.session.commit()
-    return redirect(url_for("board"))
+    is_open = False
 
+    if form.validate_on_submit():
+        board = Board(
+            title=form.title.data,
+            content=form.content.data,
+            image_url=form.image_url.data,
+            user_id=user_id
+        )
+        db.session.add(board)
+        db.session.commit()
+        return redirect(url_for("board"))
+    else:
+        if form.errors:
+            for fieldName, errorMessages in form.errors.items():
+                
+                print(fieldName, errorMessages)
+            is_open = True
+
+    boards = Board.query.all()  # 데이터베이스에서 게시물 목록을 가져옴
+    return render_template("board.html", data=boards, form=form, is_open=is_open)
 
 @app.route("/board_update/<int:board_id>/", methods=["POST"])
 def board_update(board_id):
