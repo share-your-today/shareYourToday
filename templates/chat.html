@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareYourTodayChat</title>
+    <style>
+        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+
+        .background-banner {
+            background-image: linear-gradient(45deg,
+                    rgb(51 43 43 / 75%),
+                    rgb(20 19 20 / 61%)), url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
+            max-height: 100%;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        #chat {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        #messages {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        #messageForm {
+            display: flex;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+
+        #messageInput:focus {
+            outline: none;
+        }
+
+        #sendButton {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+</head>
+
+<body data-bs-theme="dark">
+    <div class="background-banner">
+        <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
+            <div class="ms-3">
+                <img src="../static/logo.png" width="130" height="130" alt="">
+            </div>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+            <div class="me-3 d-flex flex-column align-items-center">
+                <span>{{ name }}님 로그인 중</span>
+                <button type="button" class="btn btn-danger mt-2" onclick="location.href='/logout' ">로그아웃</button>
+            </div>
+        </nav>
+        <div id="chat">
+            <form id="messageForm">
+                <input type="text" id="messageInput" placeholder="메세지를 입력하세요!">
+                <button id="sendButton" type="submit">Send</button>
+            </form>
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <footer>
+            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <script>
+        // 채팅 메시지를 표시할 엘리먼트
+        const messagesElement = document.getElementById('messages');
+
+        // 메시지를 서버로 전송하는 함수
+        const sendMessage = async (message) => {
+            await fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ message }),
+            });
+        };
+
+        // 채팅 메시지를 주기적으로 가져오는 함수
+        const getMessages = async () => {
+            const response = await fetch('/get_messages');
+            const data = await response.json();
+
+            // 가져온 메시지를 화면에 추가 (맨 앞에 추가)
+            data.messages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.textContent = `[${msg.timestamp}] ${msg.message}`;
+                messagesElement.insertAdjacentHTML('afterbegin', messageElement.outerHTML);
+            });
+
+            // 다음 폴링을 위해 가져온 메시지 중 가장 최근의 timestamp를 반환
+            return data.messages.length > 0 ? data.messages[data.messages.length - 1].timestamp : null;
+        };
+
+        // 메시지 입력 폼
+        const messageForm = document.getElementById('messageForm');
+        messageForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (message !== '') {
+                await sendMessage(message);
+                messageInput.value = '';
+            }
+        });
+
+        // 주기적으로 새로운 메시지를 가져오기
+        const pollMessages = async () => {
+            let lastTimestamp = '2000-01-01 00:00:00';
+
+            // 주기적으로 메시지 폴링
+            setInterval(async () => {
+                const response = await fetch(`/get_messages?timestamp=${lastTimestamp}`);
+                const data = await response.json();
+
+                // 가져온 메시지를 화면에 추가 (맨 앞에 추가)
+                data.messages.forEach(msg => {
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = `[ ${msg.user_id} ${msg.timestamp}] ${msg.message}`;
+                    messagesElement.insertAdjacentHTML('afterbegin', messageElement.outerHTML);
+                });
+
+                // 다음 폴링을 위해 가져온 메시지 중 가장 최근의 timestamp를 사용
+                lastTimestamp = data.latest_timestamp;
+            }, 5000);
+        };
+
+        // 페이지 로드 시 폴링 시작
+        pollMessages();
+    </script>
+</body>

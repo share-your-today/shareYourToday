@@ -1,16 +1,19 @@
-from flask import Flask, render_template, request, redirect, url_for ,session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
+import time
 from forms import RegisterForm, LoginForm
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
-from models import db, Member, Board, Board_Reply
+from models import db, Member, Board, Board_Reply, Message
 from datetime import datetime
 from functools import wraps
 
 app = Flask(__name__)
 
+messages = []
 
 # 세션 로그린 여부 확인
+
 @app.before_request
 def check_logged_in():
     # 로그인이 필요하지 않은 경로 리스트
@@ -45,20 +48,20 @@ def login():
     return render_template('login.html', form=form)
 
 
-
-@app.route('/logout',methods=['GET'])
+@app.route('/logout', methods=['GET'])
 def logout():
-    session.pop('userid',None)
+    session.pop('userid', None)
     return redirect('/login')
 
-@app.route('/register', methods=['GET','POST'])  
-def register(): 
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
     form = RegisterForm()
     if request.method == 'POST' and form.validate():
         user_id = form.user_id.data
         name = form.name.data
         pwd = form.pwd.data
-        
+
         # Check if user already exists
         if Member.query.filter_by(user_id=user_id).first() is not None:
             flash('이미 존재하는 사용자 아이디입니다.')
@@ -80,18 +83,22 @@ def register():
                 flash(error)
     return render_template('register.html', form=form)
 
+
 @app.route("/board/")
 def board():
     board = Board.query.order_by(Board.created_dttm.desc()).all()
-    return render_template("board.html",data=board)
+    return render_template("board.html", data=board)
+
 
 @app.route("/user_posts/<user_id>/")
 def user_posts(user_id):
     if user_id:
-        user_posts = Board.query.filter_by(user_id=user_id).order_by(Board.created_dttm.desc()).all()
+        user_posts = Board.query.filter_by(user_id=user_id).order_by(
+            Board.created_dttm.desc()).all()
         return render_template("board.html", data=user_posts, user_id=user_id)
     else:
         return render_template("error.html", message="유저 아이디가 유효하지 않습니다.")
+
 
 @app.route("/board_detail/<int:board_id>/")
 def board_detail(board_id):
@@ -142,6 +149,39 @@ def board_delete(board_id):
     db.session.commit()
 
     return redirect(url_for("board"))
+
+
+# 채팅 관련
+@app.route('/chat/')
+def chat():
+    return render_template("chat.html")
+
+# 채팅 메시지를 받는 라우트
+@app.route('/send', methods=['POST'])
+def send():
+    user_id = session.get("user_id", None)
+    message = request.form.get('message')
+    timestamp = datetime.utcnow()
+
+    new_message = Message(message=message, timestamp=timestamp, user_id=user_id)
+    db.session.add(new_message)
+    db.session.commit()
+
+    return jsonify({'message': message, 'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),'user_id': user_id})
+
+# 채팅 메시지를 받아오는 폴링 라우트
+@app.route('/get_messages')
+def get_messages():
+    timestamp = request.args.get('timestamp', '2000-01-01 00:00:00')
+    timestamp = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+
+    new_messages = Message.query.filter(Message.timestamp > timestamp).all()
+    latest_timestamp = datetime.utcnow()
+
+    messages = [{'message': msg.message, 'timestamp': msg.timestamp.strftime(
+        '%Y-%m-%d %H:%M:%S'), 'user_id': msg.user_id} for msg in new_messages]
+
+    return jsonify({'messages': messages, 'latest_timestamp': latest_timestamp.strftime('%Y-%m-%d %H:%M:%S')})
 
 
 if __name__ == "__main__":
