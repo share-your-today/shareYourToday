@@ -87,6 +87,12 @@
           </div>
           <div class="row mt-5">
             <div class="col-12">
+              <!-- 로그인 실패 횟수 표시 -->
+              {% if fail_count > 0 and fail_count < 5 %}
+              <div class="alert alert-warning">
+                로그인 실패 횟수: {{ fail_count }}
+              </div>
+              {% endif %}
               <form method="POST">
                 {{form.csrf_token}}
                 <div class="form-group">

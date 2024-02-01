@@ -24,7 +24,7 @@ class LoginForm(FlaskForm):
     # 로그인 폼을 정의합니다.
     class UserPassword(object):
         # 사용자 비밀번호 검증을 위한 커스텀 검증 클래스
-        def __init__(self, message=None, user_not_found_message=None):
+        def __init__(self, message=None, user_not_found_message=None, account_locked_message=None):
             # 초기화 메서드
             if message is None:
                 message = '잘못된 비밀번호'
@@ -34,6 +34,10 @@ class LoginForm(FlaskForm):
                 user_not_found_message = '존재하지 않는 ID'
             self.user_not_found_message = user_not_found_message
             # 사용자 ID 오류 메시지 설정
+            if account_locked_message is None:
+                account_locked_message = '계정이 잠겼습니다. 관리자에게 문의하세요.'
+            self.account_locked_message = account_locked_message
+            # 계정 잠김 메시지 설정
 
         def __call__(self, form, field):
             # 검증 메서드
@@ -44,9 +48,13 @@ class LoginForm(FlaskForm):
             if member is None:
                 # 멤버가 존재하지 않을 경우
                 raise ValidationError(self.user_not_found_message)
+            if member.fail_count >= 5:
+                # 로그인 실패 횟수가 5 이상일 경우
+                raise ValidationError(self.account_locked_message)
             if member.pwd != pwd:
                 # 비밀번호가 일치하지 않을 경우
                 raise ValidationError(self.message)
+
 
     user_id = StringField('user_id', validators=[DataRequired()])
     # 사용자 ID 필드, 데이터가 필요합니다.

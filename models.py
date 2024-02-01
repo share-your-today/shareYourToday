@@ -8,6 +8,7 @@ class Member(db.Model):
     user_id = db.Column(db.String(30), primary_key=True)
     pwd = db.Column(db.String(150), nullable=False)
     name = db.Column(db.String(50), nullable=False)
+    fail_count = db.Column(db.Integer,default=0)
 
     def __repr__(self):
         return f'Member(user_id={self.user_id}, name={self.name})'
