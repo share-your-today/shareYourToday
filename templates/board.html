@@ -1,42 +1,49 @@
-<!Doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bootstrap demo</title>
     <style>
-        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+      @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
 
-        .background-banner {
-            background-image: linear-gradient(45deg,
-                    rgb(51 43 43 / 75%),
-                    rgb(20 19 20 / 61%)), url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
-            max-height: 100%;
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+      .background-banner {
+        background-image: linear-gradient(
+            45deg,
+            rgb(51 43 43 / 75%),
+            rgb(20 19 20 / 61%)
+          ),
+          url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
+        max-height: 100%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
 
-        /* css */
+      /* css */
 
-        .container2 {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
+      .container2 {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
 
-        .feed_container {
-            width: calc(33.33% - 20px);
-            margin: 10px;
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+      .feed_container {
+        width: calc(33.33% - 20px);
+        margin: 10px;
+        background-color: #fff;
+        padding: 20px; /* Increased padding */
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Softer shadow */
+        transition: transform 0.2s, box-shadow 0.2s; /* Smooth transitions for hover effect */
+      }
+      .feed_container:hover {
+        transform: translateY(-5px); /* Slight lift on hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12); /* Shadow effect on hover */
+      }
 
-        /* .container2 {
+      /* .container2 {
             margin: 0px auto;
             width: 800px;
             background-color: #fff;
@@ -47,260 +54,344 @@
             max-height: 1000000px;
         } */
 
-        .feed_card_container {
-            display: inline-flex;
-            flex-direction: column;
-            margin: 0 0 24px;
-            width: 100%;
-        }
+      .feed_card_container {
+        display: inline-flex;
+        flex-direction: column;
+        margin: 0 0 24px;
+        width: 100%;
+      }
 
-        .card_content_wrapper {
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            max-width: 100%;
-            height: 700px;
-        }
+      .card_content_wrapper {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        max-width: 100%;
+        /* height: 700px; Removed fixed height */
+      }
 
-        .card_content {
-            margin: 3px;
-            max-width: 100%;
-            /* 이미지의 최대 너비를 부모 요소에 맞게 설정 */
-            height: auto;
-            /* 높이를 자동 조정하여 비율 유지 */
-        }
+      .card_content {
+        margin: 3px;
+        max-width: 100%;
+        /* 이미지의 최대 너비를 부모 요소에 맞게 설정 */
+        height: auto;
+        /* 높이를 자동 조정하여 비율 유지 */
+      }
 
-        .card_content_img {
-            width: 100%;
-            max-height: 500px;
-            height: auto;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            object-fit: contain;
-        }
+      .card_content_img {
+        width: 100%;
+        max-height: 300px;
+        height: auto;
+        border: 3px solid transparent; /* Adjusted for border */
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        object-fit: cover;
+        transition: border-color 0.3s ease; /* Smooth transition for border color */
+      }
+      .card_content_img:hover {
+        border-color: #000; /* Dark border on hover */
+      }
 
-        .card_content_review {
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            padding: 0 16px 16px;
-            font-size: 13px;
-            height: 100%;
-        }
+      .card_content_review {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        padding: 8px 16px; /* Reduced vertical padding */
+        font-size: 13px;
+      }
 
-        .card_header {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 0;
-            width: 100%;
-            height: 72px;
-        }
+      .card_content_review h4 {
+        font-weight: bold; /* Makes the title bold */
+        color: #000; /* Optional: if you want the title to be even darker than the content */
+        margin-bottom: 0.5rem; /* Adds a little space below the title */
+      }
 
-        .card_header_left {
-            display: inline-flex;
-            position: relative;
-            flex-direction: row;
-            align-items: center;
-            width: 400px;
-        }
+      .card_content_review p {
+        color: #333; /* Dark gray that is readable against a light background */
+        margin-top: 0; /* If needed, removes the top margin for tighter spacing */
+      }
 
-        .card_header_title {
-            display: inline-flex;
-            flex-direction: column;
-            margin-left: 8px;
-            width: 100%;
-        }
+      .card_header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        width: 100%;
+        height: 72px;
+      }
 
-        .reviewerImg {
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            margin-left: 5px;
-        }
+      .card_header_left {
+        display: inline-flex;
+        position: relative;
+        flex-direction: row;
+        align-items: center;
+        width: 400px;
+      }
 
-        .card_header_sub {
-            display: flex;
-            font-size: 12px;
-        }
+      .card_header_title {
+        display: inline-flex;
+        flex-direction: column;
+        margin-left: 8px;
+        width: 100%;
+      }
 
-        .card_header_time {
+      .card_header_sub {
+        display: flex;
+        font-size: 12px;
+      }
 
-            color: #adb5bd;
+      .card_header_time {
+        color: #adb5bd;
+      }
+      .reviewerImg {
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        margin-left: 5px;
+      }
 
-        }
+      .btn-custom {
+        background-color: transparent;
+        border-color: #00b2b2;
+        color: #00b2b2;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition for background and color */
+      }
+      .btn-custom:hover {
+        background-color: #00b2b2; /* Change background color on hover */
+        color: #fff; /* Change text color on hover */
+      }
+      .card_content_review a {
+        color: #333; /* Changed to a darker shade for better visibility */
+        text-decoration: none;
+      }
+      .card_header_act a {
+        font-weight: bold; /* Make it bold to stand out */
+        text-decoration: none; /* No underline by default */
+        transition: color 0.3s ease, text-decoration 0.3s ease; /* Smooth transition for hover effects */
+      }
+      .card_header_act {
+        color: #333; /* Darker color for better visibility for the entire sentence */
+      }
 
-        .btn-custom {
-            background-color: transparent;
-            border-color: #00b2b2;
-            color: #00b2b2;
-            transition: background-color 0.3s;
-            font-size: 12px;
-            margin-right: 20px;
-        }
+      .card_content_review a:hover {
+        color: #000; /* Even darker or different color on hover for interactivity */
+        text-decoration: none;
+      }
 
-        .card_header_act a {
-            color: #adb5bd;
-            /* 원하는 색상으로 변경하세요 */
-            text-decoration: none;
-            /* 밑줄 제거 */
-        }
+      .card_header_act a:hover {
+        color: #000; /* Even darker on hover for emphasis */
+        text-decoration: underline; /* Underline on hover to indicate it's a link */
+      }
 
-        .card_header_act a:hover {
-            text-decoration: none;
-            /* 호버 상태에서도 밑줄 제거 */
-        }
+      .card_content_review a {
+        color: #333; /* Darker color for better visibility */
+        text-decoration: none;
+        transition: color 0.3s ease; /* Smooth transition for color change */
+      }
 
-        .card_content_review a {
-            color: #adb5bd;
-            /* 원하는 색상으로 변경하세요 */
-            text-decoration: none;
-        }
-
-        .card_content_review a:hover {
-            color: black;
-            text-decoration: none;
-            /* 호버 상태에서도 밑줄 제거 */
-        }
+      .card_content_review a:hover {
+        color: #000; /* Even darker on hover */
+        font-weight: bold; /* Makes the text bold on hover */
+      }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+  </head>
 
-</head>
-
-<body data-bs-theme="dark">
+  <body data-bs-theme="dark">
     <div class="background-banner">
-        <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
-            <div class="ms-3">
-                <img src="{{ url_for('static', filename='logo.png') }}" width="130" height="130" alt="" />
-            </div>
-            <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <!-- <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link text-white" aria-current="page" href="{{ url_for('home')}}">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                등록하기
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" href="#">채팅</a>
-                            </li>
-                        </ul>
-                    </div> -->
-                </div>
-            </nav>
-        </nav>
-
-        <div class="px-4 py-5 my-5 text-center">
-            <h1 class="display-5 fw-bold text-body-emphasis">Share Your Today</h1>
-            <div class="col-lg-6 mx-auto">
-                <p class="lead mb-4">
-                    <br>
-                    당신의 오늘 하루를 들려주세요.
-                    <br>
-                </p>
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        일기 추가
-                    </button>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        채팅
-                    </button>
-                </div>
-            </div>
+      <nav
+        class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between"
+        data-bs-theme="dark"
+      >
+        <div class="ms-3">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            width="130"
+            height="130"
+            alt=""
+          />
         </div>
-
-        <!-- 일기 추가 모달 -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">오늘의 일기를 써봐요</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{{ url_for('board_create') }}" method="GET">
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">제목</label>
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                    name="title">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">일기내용</label>
-                                <textarea class="form-control" aria-label="With textarea" name="content"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">사진 주소</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" name="image_url">
-                            </div>
-                            <button type="submit" class="btn btn-danger">Submit</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="me-3 d-flex flex-column align-items-center">
+          <span>{{ name }}님 로그인 중</span>
+          <button
+            type="button"
+            class="btn btn-danger mt-2"
+            onclick="location.href='/logout' "
+          >
+            로그아웃
+          </button>
         </div>
+      </nav>
 
-        <div class="container2 d-flex justify-content-center flex-wrap">
-            {% for board in data %}
-            <div class="feed_container">
-                <div class="feed_card_container">
-                    <section class="card_header">
-                        <div class="card_header_left">
-                            <a href="#">
-                                <img class="reviewerImg"
-                                    src="data:image/png;base64,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">
-                            </a>
-                            <div class="card_header_title">
-                                <div class="card_header_act">
-                                    <a href="{{ url_for('user_posts', user_id=board.user_id) }}">
-                                        <div><strong>{{ board.user_id }}</strong> 님이 글을 남겼어요.</div>
-                                    </a>
-                                </div>
-                                <div class="card_header_sub">
-                                    <span class="card_header_time">{{ board.created_dttm.strftime('%Y.%m.%d') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <div class="card_content_wrapper">
-                        <div class="card_content">
-                            <a href="{{ url_for('board_detail', board_id=board.board_id) }}">
-                                <img class="card_content_img"
-                                    src="{% if board.image_url %}{{ board.image_url }}{% else %}/static/java.png{% endif %}">
-                            </a>
-                            <hr>
-                            <div class="card_content_review">
-                                <a href="{{ url_for('board_detail', board_id=board.board_id) }}">
-                                    <h4>{{ board.title }}</h4>
-                                    <p>{{ board.content }}</p>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+      <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis">Share Your Today</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4">
+            <br />
+            당신의 오늘 하루를 들려주세요.
+            <br />
+          </p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <!-- Button trigger modal -->
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              일기 추가
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              채팅
+            </button>
+          </div>
         </div>
+      </div>
+
+      <!-- 일기 추가 모달 -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                오늘의 일기를 써봐요
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form action="{{ url_for('board_create') }}" method="GET">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label"
+                    >제목</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="exampleInputEmail1"
+                    aria-describedby="emailHelp"
+                    name="title"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label"
+                    >일기내용</label
+                  >
+                  <textarea
+                    class="form-control"
+                    aria-label="With textarea"
+                    name="content"
+                  ></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label"
+                    >사진 주소</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="exampleInputPassword1"
+                    name="image_url"
+                  />
+                </div>
+                <button type="submit" class="btn btn-danger">Submit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container2 d-flex flex-wrap">
+        {% for board in data %}
+        <div class="feed_container">
+          <div class="feed_card_container">
+            <section class="card_header">
+              <div class="card_header_left">
+                <a href="#">
+                  <img
+                    class="reviewerImg"
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAflBMVEX///8AAAD09PT4+Pjt7e38/PzIyMjl5eWtra339/e+vr6zs7Pf39+np6fw8PDBwcFOTk54eHgVFRUhISHY2Nhra2tjY2MmJiZTU1OCgoIZGRlFRUWPj49eXl6cnJw+Pj4zMzN6enouLi6fn5+GhoaUlJTR0dEODg5BQUFhYWE0skWYAAAFmElEQVR4nO2daVPjMAyGca5elN4nvVJKgf//B5dsKZDESWxZiRRGz8fdnR29Y8fW6T48CIIgCIIgCIIgCIIgCIIgCIIgCIIgCIKgJ/RCahNqIugfFkf1xXa8GV7/ktJgMNmqPM+7q09tGgZhf69R98V5M6e2z5nDrFjfbSX71Ca64B8q5P1n2l6Ng6r1+17HiNpUEEHJ95dj0sIzZ2ChL9mqrVvGjZ3AT3bUJlvhra0FKvXRIh/AO1br0XD0qA03JTA9Q7NsA2rTzfBWQIFKzVohMXwGC1Tq1IaNunQQqNSY2vxqjBy1EibUAqq4OgpUakAtoZwQfsp806EWUYq9K5OH9afovkcThtQyShijKFR8r4w+jkC1oRZSiC7fBIKra4O1hErF1FIKcHHXMvBcxDmeQPVCLUZLjKjwyDEa7k0RFSqOmeIIUyDLrE2MqnBGLUcDqkCO/ncHWSG/IMoyA1wJv0g4RlZ4phaUA5YiLYHdjYgtUD1SK8qAfdAoxa1Ug+mU3hhRS8qA69EkdKklZRihK+QWXuArfKWWlAH7wuenEC+Dcefv71JuWVP8s5Rblw1Otvs33G58fJ+GXR4DXSG7hCJCWS3FllpQjgmywjW1oBxdZIUHakE5sIOLK7WgPMgKqeVowP0QF9RyNOD6bdzi3wQf2s2mY9qjlqMDow/jzoVajBbM05Rbou0Lm8bucvbUUgrAW0SmS4i3iByvihtYIRS7sOKHHYpAbvmL3/hnBIHP1CpKwUhm8Kv+pnh1Fsiv+JvB9Tzl27V3x3crlS6p7TcAPE+SMGZX+dURvIEF8j5Gfwigebd1K1YwIYD1YS5aI/DhIYQMzvDLrpViPTrzxq1OUUlkd6QunqgNNuAp3Vvg2STfMqW0LsfoItrnruvI1A/fZY6Yz6/4g9mm9YY3Mdl2u6HJVr1kN+ji/x+vhnwGS4LX7zs+G533uqdyeedDbkMu7n/3tuOxWf1U2Ju/tK+LvK47kyj3z8PUGPiF/iWCMHstzDThXRRrvJzTTvepdbL7+kDsBgw0pmsDvOD6Eu/Hx9VqdX5eLy+Dq/520LTlzCgDxo7+YYG4MCUfep5Xkq8PY+3/tyZLLhbmnbawo35UOBlGM5vwWHbbre2TLZ2y7MCZoDPjpcSehI2dxk5VXadpv9wzSMdMzD+fRwMPb99owc2wQrE2Owb7hi+hNLhTLfouNlG57+VFsfl/1ljb8MXcpk+my+FVr7I3Hy7tBt4aKpyWeGGFKt8n3dH8R6c3H3Un74Cx4SaqUr7jRLrjlOK4dkcV+HwQHnU/RORXBEMNcKp1FXv0Aj8l1ngx+ojz6A6817eKkDfK6qC2zkzsFlI4NY1f4hTpcaglnMKfinGhhsD/kVpTBvy4H/XFBATQO90BzmjNILuo2H3qGKDGUvgTMRhgNt4gvXCFDOKzZ0NqLQWgNcA9USspBKusyu8cvYN0nuIPT+KBU0eljurLeMcQyMsfzYLhn8J7uJpg6i6wqj5BjfuNwc3jzuK8iBwd0jSO7mnIIblWzsmt0I//VAI+boN8eKNM9eE0JMUzasriEkXZ1dGocEm8UdtuCFwgZ5/7N3D/m2/YlAYcROG+uVoj4LnotmxS+DaNqQ03Bjgs1QKP7Q7Qc2vHdX8DdulzzSHqgAUYfAqi1cBKpmi/A9AAoKej+eaBdUC6bPDfCawTSJDIPQWVBvLK4ge10VZA5ocxH9SpH8hRQ22zJfYC2+TRJNh7Ne0JLG7YhxdtyCP+xv664J/sTmPvmXLqYjPBPuHWJr87wf4notx+irJ57LNRXLplTbHP7bdNoX3fMM82qGLsG6T+vsKY2mRL7M9S/J/kqBfA6J77q11NAvolhX6LMsLgR/i9dgCVJwiCIAiCIAiCIAiCIAiCIAiCIAiCIAjM+AcgQGQRhEXiawAAAABJRU5ErkJggg=="
+                  />
+                </a>
+                <div class="card_header_title">
+                  <div class="card_header_act">
+                    <a
+                      href="{{ url_for('user_posts', user_id=board.user_id) }}"
+                    >
+                      <strong>{{ board.user_id }}</strong>
+                    </a>
+                    님이 글을 남겼어요.
+                  </div>
+                  <div class="card_header_sub">
+                    <span class="card_header_time"
+                      >{{ board.created_dttm.strftime('%Y.%m.%d') }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </section>
+            <div class="card_content_wrapper">
+              <div class="card_content">
+                <a
+                  href="{{ url_for('board_detail', board_id=board.board_id) }}"
+                >
+                  <img
+                    class="card_content_img"
+                    src="{% if board.image_url %}{{ board.image_url }}{% else %}/static/java.png{% endif %}"
+                  />
+                </a>
+                <hr />
+                <div class="card_content_review">
+                  <a
+                    href="{{ url_for('board_detail', board_id=board.board_id) }}"
+                  >
+                    <h4>{{ board.title }}</h4>
+                    <p>{{ board.content }}</p>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
     </div>
 
     <div class="container">
-        <footer>
-            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-            </div>
-        </footer>
+      <footer>
+        <div
+          class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
+        ></div>
+      </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous"></script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
