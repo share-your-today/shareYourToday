@@ -9,11 +9,6 @@ from datetime import datetime
 app = Flask(__name__)
 # DB 연결 설정 
 
-basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로
-app.config['SQLALCHEMY_DATABASE_URI'] =\
-        'sqlite:///' + os.path.join(basedir, 'database.db') #SQLite 데이터베이스 설정
-
-
 @app.route("/")
 def home():
     #세연에서 사용자 이름을 가져옴, 없으면 None
