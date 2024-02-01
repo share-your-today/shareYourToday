@@ -33,14 +33,28 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    fail_count = 0
     if form.validate_on_submit():
         user = Member.query.filter_by(user_id=form.user_id.data).first()
-        # 이 시점에서 사용자가 존재하고 비밀번호가 맞다고 가정할 수 있음
-        session['user_id'] = user.user_id
-        session['name'] = user.name
-        return redirect('/board')
-    # 폼 에러(검증 에러 포함)는 템플릿에서 사용할 수 있음
-    return render_template('login.html', form=form)
+        if user:
+            # 로그인 성공 처리
+            user.fail_count = 0
+            db.session.commit()
+            session['user_id'] = user.user_id
+            session['name'] = user.name
+            return redirect('/board')
+    else:
+        #로그인 실패시 해당 유저가 있는지 확인
+        user = Member.query.filter_by(user_id=form.user_id.data).first()
+        if user:
+            #있으면 실패 카운트 늘리기
+            #최대 5까지만
+            if user.fail_count<5:
+                user.fail_count+=1
+            fail_count=user.fail_count
+            db.session.commit()
+    return render_template('login.html', form=form, fail_count=fail_count)
+
 
 
 
