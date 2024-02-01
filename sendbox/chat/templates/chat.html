@@ -1,0 +1,116 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <style>
+        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+
+        .background-banner {
+            background-image: linear-gradient(45deg,
+                    rgb(51 43 43 / 75%),
+                    rgb(20 19 20 / 61%)), url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
+            max-height: 100%;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+</head>
+
+<body data-bs-theme="dark">
+    <div class="background-banner">
+        <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
+            <div class="ms-3">
+                <img src="../static/logo.png" width="130" height="130" alt="">
+            </div>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+        </nav>
+        <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold text-body-emphasis">Share Your Today</h1>
+            <div>
+                <textarea readonly id="chat_area" cols="80" rows="20">
+
+                </textarea>
+                <br>
+                <br>
+                <input id="chat" style="font-size: 15px;" size="80" autocomplete="off" placeholder="메세지를 입력하세요.">
+                <button type="submit">전송</button>
+                <button onclick="exit_chat();">나가기</button>
+            </div>
+
+            <script>
+                var socket;
+                $(document).ready(function () {
+
+                    socket = io.connect('http://' + document.domain + ':' + location.port + '/chat', { transports: ['websocket'] });
+                    // socket.on('connect', function () {
+                    //     console.log('client connected');
+                    //     socket.emit('joined');
+                    // });
+                    socket.on('joined', function (data) {
+                        $('#chat_area').val($('#chat_area').val() + '<' + data + '>\n');
+                        $('#chat_area').scrollTop($('#chat_area')[0].scrollHeight);
+                    });
+
+                    socket.on('left', function (data) {
+                        $('#chat_area').val($('#chat_area').val() + '<' + data + '>\n');
+                        $('#chat_area').scrollTop($('#chat_area')[0].scrollHeight);
+                    });
+
+                    socket.on('send_msg', function (data) {
+                        $('#chat_area').val($('#chat_area').val() + data + '\n');
+                        $('#chat_area').scrollTop($('#chat_area')[0].scrollHeight);
+                    });
+                    $('#chat').keypress(function (e) {
+                        var code = e.keyCode || e.which;
+                        if (code == 13) {
+                            text = $('#chat').val();
+                            $('#chat').val('');
+                            socket.emit('send_msg', { msg: text });
+                        }
+                    });
+                });
+
+                function exit_chat() {
+                    socket.emit('left', {}, function () {
+                        socket.disconnect();
+                        window.location.href = "{{url_for('home')}}"
+                    })
+                };
+            </script>
+
+
+        </div>
+    </div>
+
+
+    <div class="container">
+        <footer>
+            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>
