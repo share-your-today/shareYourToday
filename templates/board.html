@@ -261,51 +261,68 @@
         </div>
       </div>
 
-        <!-- 일기 추가 모달 -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">오늘의 일기를 써봐요</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                        {% for message in messages %}
-                        <div class="alert alert-danger">{{ message }}</div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                        <form action="{{ url_for('board_create') }}" method="post">
-                            {{ form.hidden_tag() }}
-                            <div class="mb-3">
-                                {{ form.title.label(class="form-label") }}
-                                {{ form.title(class="form-control") }}
-                                {% if form.title.errors %}
-                                <div class="alert alert-danger">{{ form.title.errors[0] }}</div>
-                                {% endif %}
-                            </div>
-                        <div class="mb-3">
-                            {{ form.content.label(class="form-label") }}
-                            {{ form.content(class="form-control", style="height: 200px;") }}
-                            {% if form.content.errors %}
-                            <div class="alert alert-danger">{{ form.content.errors[0] }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="mb-3">
-                            {{ form.image_url.label(class="form-label") }}
-                            {{ form.image_url(class="form-control") }}
-                            {% if form.image_url.errors %}
-                            <div class="alert alert-danger">{{ form.image_url.errors[0] }}</div>
-                            {% endif %}
-                        </div>
-                        <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                    </div>
-                </div>
+      <!-- 일기 추가 모달 -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                오늘의 일기를 써봐요
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
+            <div class="modal-body">
+              <form action="{{ url_for('board_create') }}" method="GET">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label"
+                    >제목</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="exampleInputEmail1"
+                    aria-describedby="emailHelp"
+                    name="title"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label"
+                    >일기내용</label
+                  >
+                  <textarea
+                    class="form-control"
+                    aria-label="With textarea"
+                    name="content"
+                  ></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label"
+                    >사진 주소</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="exampleInputPassword1"
+                    name="image_url"
+                  />
+                </div>
+                <button type="submit" class="btn btn-danger">Submit</button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
 
       <div class="container2 d-flex flex-wrap">
         {% for board in data %}
@@ -371,33 +388,10 @@
       </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous">
-        
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-                // is_open 변수 값에 따라 모달을 열거나 닫습니다.
-                {% if is_open %}
-                var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                myModal.show();
-                {% endif %}
-
-                // 기존 Flash 메시지 숨기는 코드
-                setTimeout(function () {
-                    var flashMessages = document.querySelector(".flash-messages");
-                    if (flashMessages) {
-                        flashMessages.style.opacity = "0";
-                        setTimeout(function () {
-                            flashMessages.style.display = "none";
-                        }, 600);
-                    }
-                }, 1000);
-            });
-        </script>
-    </script>
-</body>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

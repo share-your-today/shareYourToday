@@ -43,8 +43,6 @@ class LoginForm(FlaskForm):
             # 계정 잠김 메시지 설정
 
         def __call__(self, form, field):
-            print(f"User ID: {form.user_id.data}")
-            print(f"Password: {form.pwd.data}")
             # 검증 메서드
             user_id = form.user_id.data
             pwd = field.data
@@ -64,17 +62,3 @@ class LoginForm(FlaskForm):
     # 사용자 ID 필드, 데이터가 필요합니다.
     pwd = PasswordField("pwd", validators=[DataRequired(), UserPassword()])
     # 비밀번호 필드, 데이터가 필요하며 커스텀 검증 클래스를 사용합니다.
-
-
-class BoardForm(FlaskForm):
-    title = StringField("제목", validators=[DataRequired()])
-    content = StringField("일기 내용", validators=[DataRequired()])
-    image_url = StringField("사진 주소")
-
-    def validate_title(self, field):
-        if len(field.data) > (300//4):
-            raise ValidationError("제목은 75자 이하여야 합니다.")
-        
-    def validate_image_url(self, field):
-        if len(field.data) > (300):
-            raise ValidationError("사진 주소는 300자 이하여야 합니다.")
