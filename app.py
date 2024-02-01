@@ -225,14 +225,10 @@ def get_messages():
 def find_pw(user_id):
     user=Member.query.filter_by(user_id=user_id).first()
     pwd=user.pwd
+    user.fail_count=0
+    db.session.commit()
     return render_template('find_pw.html', user_id=user_id,pwd=pwd)
 
-@app.route('/delete_user/<user_id>', methods=['POST'])
-def delete_user(user_id):
-    user = Member.query.filter_by(user_id=user_id).first()
-    db.session.delete(user)
-    db.session.commit()
-    return redirect(url_for("login"))
 
 if __name__ == "__main__":
     basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로
