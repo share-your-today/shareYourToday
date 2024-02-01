@@ -230,9 +230,11 @@
               </div>
             </div>
             <div class="card_header_right">
+              {% if session.get('user_id') == data.board.user_id %}
               <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">
                 수정
               </button>
+              {% endif %}
             </div>
           </section>
           <div class="card_content_wrapper">
