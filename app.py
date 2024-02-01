@@ -27,9 +27,7 @@ def home():
     user_id = session.get("user_id", None)
     if name is None:
         return redirect("/login")  # 로그인하지 않은 사용자는 로그인 페이지로 리디렉션
-    return render_template(
-        "index.html", name=name, user_id=user_id
-    )  # 로그인한 사용자에게 메잊 페이지(index.html) 표시
+    return redirect('/board')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -40,7 +38,7 @@ def login():
         # 이 시점에서 사용자가 존재하고 비밀번호가 맞다고 가정할 수 있음
         session['user_id'] = user.user_id
         session['name'] = user.name
-        return redirect('/')
+        return redirect('/board')
     # 폼 에러(검증 에러 포함)는 템플릿에서 사용할 수 있음
     return render_template('login.html', form=form)
 
@@ -48,7 +46,7 @@ def login():
 
 @app.route('/logout',methods=['GET'])
 def logout():
-    session.pop('userid',None)
+    session.clear()
     return redirect('/login')
 
 @app.route('/register', methods=['GET','POST'])  
@@ -59,46 +57,56 @@ def register():
         name = form.name.data
         pwd = form.pwd.data
         
-        # Check if user already exists
         if Member.query.filter_by(user_id=user_id).first() is not None:
             flash('이미 존재하는 사용자 아이디입니다.')
             return redirect(url_for('register'))
+
         try:
             member = Member(user_id=user_id, name=name, pwd=pwd)
             db.session.add(member)
             db.session.commit()
             flash("회원가입이 성공했습니다! ")
-            return redirect(url_for('login'))
+
+            # 자동 로그인을 위한 세션 설정
+            session['user_id'] = user_id
+            session['name'] = name
+
+            return redirect(url_for('board'))
         except Exception as e:
             db.session.rollback()
             flash('데이터베이스 저장 중 오류가 발생했습니다.')
             app.logger.error('Error on registration: %s', str(e))
     else:
         for field, errors in form.errors.items():
-            print(errors)
             for error in errors:
                 flash(error)
     return render_template('register.html', form=form)
 
+
 @app.route("/board/")
 def board():
+    name = session.get("name", None)
+    user_id = session.get("user_id", None)
     board = Board.query.order_by(Board.created_dttm.desc()).all()
-    return render_template("board.html",data=board)
+    return render_template("board.html",data=board, name=name, user_id=user_id)
 
 @app.route("/user_posts/<user_id>/")
 def user_posts(user_id):
+    name = session.get("name", None)
     if user_id:
         user_posts = Board.query.filter_by(user_id=user_id).order_by(Board.created_dttm.desc()).all()
-        return render_template("board.html", data=user_posts, user_id=user_id)
+        return render_template("board.html", data=user_posts, user_id=user_id, name=name)
     else:
         return render_template("error.html", message="유저 아이디가 유효하지 않습니다.")
 
 @app.route("/board_detail/<int:board_id>/")
 def board_detail(board_id):
+    name = session.get("name", None)
+    user_id = session.get("user_id", None)
     board = Board.query.get(board_id)
     reply = Board_Reply.query.filter_by(board_id=board_id).all()
     data = {"board": board, "reply": reply}
-    return render_template("board_detail.html", data=data)
+    return render_template("board_detail.html", data=data, name=name, user_id=user_id)
 
 
 @app.route("/board_create")
