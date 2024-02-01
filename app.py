@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for ,session
+from flask import Flask, render_template, request, redirect, url_for ,session, flash
 import os
 from forms import RegisterForm, LoginForm
 from flask_wtf.csrf import CSRFProtect
@@ -18,39 +18,52 @@ def home():
         return redirect('/login') #로그인하지 않은 사용자는 로그인 페이지로 리디렉션
     return render_template("index.html",name=name,user_id=user_id) #로그인한 사용자에게 메잊 페이지(index.html) 표시
 
-@app.route('/login', methods=['GET','POST'])  
-def login():  
-    form = LoginForm() #로그인 폼 생성
-    if form.validate_on_submit(): #폼 데이터의 유효성 검사
-        session.clear()
-        user= Member.query.filter_by(user_id=form.data.get('user_id')).first()
-        if user:
-            #사용자 인증 성공시 세션에 사용자 정보 저장
-            session['user_id'] = user.user_id
-            session['name'] = user.name  
-            return redirect('/') 
-        else:
-            #로그인 실패시 처리
-            pass
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Member.query.filter_by(user_id=form.user_id.data).first()
+        # 이 시점에서 사용자가 존재하고 비밀번호가 맞다고 가정할 수 있음
+        session['user_id'] = user.user_id
+        session['name'] = user.name
+        return redirect('/')
+    # 폼 에러(검증 에러 포함)는 템플릿에서 사용할 수 있음
     return render_template('login.html', form=form)
+
+
+
+@app.route('/logout',methods=['GET'])
+def logout():
+    session.pop('userid',None)
+    return redirect('/login')
 
 @app.route('/register', methods=['GET','POST'])  
 def register(): 
     form = RegisterForm()
-    if form.validate_on_submit(): 
+    if request.method == 'POST' and form.validate():
+        user_id = form.user_id.data
+        name = form.name.data
+        pwd = form.pwd.data
+        
+        # Check if user already exists
+        if Member.query.filter_by(user_id=user_id).first() is not None:
+            flash('이미 존재하는 사용자 아이디입니다.')
+            return redirect(url_for('register'))
         try:
-            member = Member()  # Menber 모델 객체 생성
-            member.user_id = form.data.get('user_id')
-            member.name = form.data.get('name')
-            member.pwd = form.data.get('pwd')
-            db.session.add(member)  #DB에 사용자 정보 저장
-            db.session.commit()  #DB 변경사항 커밋
-            return "가입 완료"  #회원가입 완료시 반환되는 메시지
+            member = Member(user_id=user_id, name=name, pwd=pwd)
+            db.session.add(member)
+            db.session.commit()
+            flash("회원가입이 성공했습니다! ")
+            return redirect(url_for('login'))
         except Exception as e:
-            print("데이터베이스 저장 중 오류 발생: ",str(e))
-            return "데이터베이스 저장 오류" +str(e)
+            db.session.rollback()
+            flash('데이터베이스 저장 중 오류가 발생했습니다.')
+            app.logger.error('Error on registration: %s', str(e))
     else:
-        print("폼 유효성 검사 실패: ",form.errors)
+        for field, errors in form.errors.items():
+            print(errors)
+            for error in errors:
+                flash(error)
     return render_template('register.html', form=form)
 
 @app.route("/board/")

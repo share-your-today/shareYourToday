@@ -29,24 +29,28 @@
     <div class="background-banner">
         <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
             <div class="ms-3">
-                <img src="../static/logo.png" width="130" height="130"
-                    alt="">
+                <img src="../static/logo.png" width="130" height="130" alt="">
             </div>
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                 </div>
             </nav>
+            <div class="me-3 d-flex flex-column align-items-center">
+                <span>{{ name }}님 로그인 중</span>
+                <button type="button" class="btn btn-danger mt-2" onclick="location.href='/logout' ">로그아웃</button>
+            </div>
         </nav>
+        
+        
+        
 
         <div class="px-4 py-5 my-5 text-center">
             <h1 class="display-5 fw-bold text-body-emphasis">Share Your Today</h1>
             <div class="col-lg-6 mx-auto">
                 <p class="lead mb-4">
-                    <h2>{%if name%} {{name}} {%endif%}</h2>
                     <br>
                     당신의 오늘 하루를 들려주세요.
                     <br>
