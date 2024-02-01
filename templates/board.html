@@ -71,6 +71,7 @@
 
         .card_content_img {
             width: 100%;
+            max-height: 500px;
             height: auto;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
@@ -172,7 +173,7 @@
     <div class="background-banner">
         <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
             <div class="ms-3">
-                <img src="../static/logo.png" width="130" height="130" alt="">
+                <img src="{{ url_for('static', filename='logo.png') }}" width="130" height="130" alt="" />
             </div>
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
@@ -247,7 +248,7 @@
             </div>
         </div>
 
-        <div class="container2">
+        <div class="container2 d-flex justify-content-center flex-wrap">
             {% for board in data %}
             <div class="feed_container">
                 <div class="feed_card_container">
@@ -259,7 +260,7 @@
                             </a>
                             <div class="card_header_title">
                                 <div class="card_header_act">
-                                    <a href="{{ url_for('board_detail', board_id=board.board_id) }}">
+                                    <a href="{{ url_for('user_posts', user_id=board.user_id) }}">
                                         <div><strong>{{ board.user_id }}</strong> 님이 글을 남겼어요.</div>
                                     </a>
                                 </div>
@@ -288,7 +289,6 @@
             </div>
             {% endfor %}
         </div>
-
     </div>
 
     <div class="container">

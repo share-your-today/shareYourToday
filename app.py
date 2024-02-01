@@ -58,6 +58,13 @@ def board():
     board = Board.query.order_by(Board.created_dttm.desc()).all()
     return render_template("board.html",data=board)
 
+@app.route("/user_posts/<user_id>/")
+def user_posts(user_id):
+    if user_id:
+        user_posts = Board.query.filter_by(user_id=user_id).order_by(Board.created_dttm.desc()).all()
+        return render_template("board.html", data=user_posts, user_id=user_id)
+    else:
+        return render_template("error.html", message="유저 아이디가 유효하지 않습니다.")
 
 @app.route("/board_detail/<int:board_id>/")
 def board_detail(board_id):
