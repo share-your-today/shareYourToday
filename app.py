@@ -17,7 +17,7 @@ messages = []
 @app.before_request
 def check_logged_in():
     # 로그인이 필요하지 않은 경로 리스트
-    allowed_routes = ["login", "static", "home", "register"]
+    allowed_routes = ["login", "static", "home", "register","find_pw"]
 
     if "user_id" not in session and request.endpoint not in allowed_routes:
         return redirect(url_for("login"))
@@ -37,6 +37,7 @@ def home():
 def login():
     form = LoginForm()
     fail_count = 0
+    user_id=""
     if form.validate_on_submit():
         user = Member.query.filter_by(user_id=form.user_id.data).first()
         if user:
@@ -50,13 +51,14 @@ def login():
         #로그인 실패시 해당 유저가 있는지 확인
         user = Member.query.filter_by(user_id=form.user_id.data).first()
         if user:
-            #있으면 실패 카운트 늘리기
-            #최대 5까지만
-            if user.fail_count<5:
-                user.fail_count+=1
+            user_id=user.user_id
+            user.fail_count += 1
             fail_count=user.fail_count
             db.session.commit()
-    return render_template('login.html', form=form, fail_count=fail_count)
+            if(user.fail_count>=5):
+                if form.validate_on_submit():
+                    return render_template('login.html', form=form, fail_count=fail_count, user_id=user_id)
+    return render_template('login.html', form=form, fail_count=fail_count,user_id=user_id)
 
 
 
@@ -202,6 +204,18 @@ def get_messages():
 
     return jsonify({'messages': messages, 'latest_timestamp': latest_timestamp.strftime('%Y-%m-%d %H:%M:%S')})
 
+@app.route('/find_pw/<user_id>')
+def find_pw(user_id):
+    user=Member.query.filter_by(user_id=user_id).first()
+    pwd=user.pwd
+    return render_template('find_pw.html', user_id=user_id,pwd=pwd)
+
+@app.route('/delete_user/<user_id>', methods=['POST'])
+def delete_user(user_id):
+    user = Member.query.filter_by(user_id=user_id).first()
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for("login"))
 
 if __name__ == "__main__":
     basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로

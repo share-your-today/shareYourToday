@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Find_pw</title>
+    <style>
+      @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
+
+      .background-banner {
+        background-image: linear-gradient(
+            45deg,
+            rgb(51 43 43 / 75%),
+            rgb(20 19 20 / 61%)
+          ),
+          url("https://i.ibb.co/7vJ251T/pxfuel.jpg");
+        max-height: 100%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 5px;
+        max-width: 300px;
+        margin: auto;
+      }
+
+      .cell {
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+        text-align: center;
+        line-height: 100px;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .game-status {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .game-rules {
+        text-align: center;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body data-bs-theme="dark">
+    <div class="background-banner">
+      <nav
+        class="navbar border-bottom border-bottom-dark d-flex justify-content-center"
+        data-bs-theme="dark"
+      >
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          width="130"
+          height="130"
+          alt="logo"
+        />
+      </nav>
+      <div>
+        <div class="game-rules">
+          <h2>규칙</h2>
+          <p>이기면 비밀번호 전부를 보여줍니다!</p>
+          <p>비기면 비밀번호 일부를 보여줍니다!!</p>
+          <p>지면 비밀번호를 알려줄 수 없습니다!!!</p>
+        </div>
+        <div id="tictactoe-board" class="board">
+          <!-- 틱택토 게임 셀 -->
+          <div class="cell" data-index="0"></div>
+          <div class="cell" data-index="1"></div>
+          <div class="cell" data-index="2"></div>
+          <div class="cell" data-index="3"></div>
+          <div class="cell" data-index="4"></div>
+          <div class="cell" data-index="5"></div>
+          <div class="cell" data-index="6"></div>
+          <div class="cell" data-index="7"></div>
+          <div class="cell" data-index="8"></div>
+        </div>
+        <div class="game-status"></div>
+        <div class="game-status"></div>
+        <button id="login-btn" class="btn btn-primary" style="display: none">
+          로그인 화면으로 이동
+        </button>
+      </div>
+    </div>
+    <div class="container">
+      <footer>
+        <div
+          class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
+        ></div>
+      </footer>
+    </div>
+    <script>
+      var userId = "{{ user_id }}";
+      var pwd = "{{ pwd }}";
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // 게임 상태 변수
+      let currentPlayer = "X"; // 현재 플레이어
+      let gameActive = true; // 게임 활성 상태
+      let gameState = ["", "", "", "", "", "", "", "", ""]; // 게임 보드 상태
+      let turnCount = 0; // 턴 카운트
+      const winningConditions = [
+        // 승리 조건 설정
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      const statusDisplay = document.querySelector(".game-status"); // 게임 상태 표시
+
+      //삭제함수
+      function deleteUser(userId) {
+        console.log(0);
+        fetch("/delete_user/" + userId, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // 성공 로직 처리
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+      // 셀 클릭 이벤트 핸들러
+      function handleCellClick(clickedCellEvent) {
+        if (currentPlayer !== "X" || !gameActive) {
+          return; // 컴퓨터의 턴이거나 게임이 비활성화된 경우 무시
+        }
+        const clickedCell = clickedCellEvent.target;
+        const clickedIndex = parseInt(clickedCell.getAttribute("data-index"));
+
+        if (gameState[clickedIndex] !== "" || !gameActive) {
+          return; // 이미 선택된 칸이거나 게임이 비활성화된 경우 무시
+        }
+
+        gameState[clickedIndex] = currentPlayer; // 셀 상태 업데이트
+        clickedCell.innerHTML = currentPlayer; // 셀에 표시
+        turnCount++; // 턴 카운트 증가
+        checkResult(); // 결과 체크
+
+        if (gameActive) {
+          currentPlayer = "O"; // 컴퓨터의 턴으로 변경
+          setTimeout(computerTurn, 500); // 0.5초 후 컴퓨터 턴
+        }
+      }
+
+      // 컴퓨터 턴
+      function computerTurn() {
+        let availableCells = gameState
+          .map((cell, index) => (cell === "" ? index : null))
+          .filter((index) => index !== null);
+
+        if (availableCells.length === 0) {
+          return; // 선택 가능한 셀이 없는 경우
+        }
+
+        // 컴퓨터의 수 선택 로직
+        let chosenCellIndex = null;
+        chosenCellIndex = findWinningCell("O"); // 컴퓨터 승리 기회 확인
+        if (chosenCellIndex != null) {
+          play(chosenCellIndex); // 승리 기회가 있다면 해당 셀 선택
+          return;
+        }
+
+        chosenCellIndex = findWinningCell("X"); // 플레이어의 승리 방해
+        if (chosenCellIndex !== null) {
+          play(chosenCellIndex); // 방해가 가능하다면 해당 셀 선택
+          return;
+        }
+
+        const randomCellIndex =
+          availableCells[Math.floor(Math.random() * availableCells.length)];
+        play(randomCellIndex); // 위 조건에 해당하지 않는 경우 무작위 선택
+      }
+
+      // 승리 조건 확인 함수
+      function findWinningCell(player) {
+        for (let condition of winningConditions) {
+          const [a, b, c] = condition;
+          if (
+            gameState[a] === player &&
+            gameState[b] === player &&
+            gameState[c] === ""
+          ) {
+            return c;
+          }
+          if (
+            gameState[a] === player &&
+            gameState[c] === player &&
+            gameState[b] === ""
+          ) {
+            return b;
+          }
+          if (
+            gameState[b] === player &&
+            gameState[c] === player &&
+            gameState[a] === ""
+          ) {
+            return a;
+          }
+        }
+        return null;
+      }
+
+      // 셀 선택 및 게임 상태 업데이트 함수
+      function play(index) {
+        gameState[index] = "O"; // 게임 상태 업데이트
+        document.querySelector(`[data-index="${index}"]`).innerHTML = "O"; // 화면에 표시
+        turnCount++; // 턴 카운트 증가
+        checkResult(); // 결과 체크
+        currentPlayer = "X"; // 플레이어의 턴으로 변경
+      }
+
+      // 게임 결과 체크 함수
+      function checkResult() {
+        let roundWon = false;
+        for (let i = 0; i <= 7; i++) {
+          const winCondition = winningConditions[i];
+          let a = gameState[winCondition[0]];
+          let b = gameState[winCondition[1]];
+          let c = gameState[winCondition[2]];
+          if (a === "" || b === "" || c === "") {
+            continue; // 빈 셀이 있으면 승리 조건 미충족
+          }
+          if (a === b && b === c) {
+            roundWon = true; // 승리 조건 충족
+            break;
+          }
+        }
+        if (roundWon || !gameState.includes("")) {
+          gameActive = false; // 게임이 끝났음을 나타내는 플래그
+        }
+        if (!gameActive) {
+          document.getElementById("login-btn").style.display = "block";
+        }
+
+        if (roundWon) {
+          if (currentPlayer === "X") {
+            statusDisplay.innerHTML = `You wins! Your ID is ${userId} and your password is ${pwd}`;
+          } else {
+            statusDisplay.innerHTML = `You loses... You cannot get your pwd`;
+          }
+          return;
+        } else if (!gameState.includes("")) {
+          let maskedPwd = "";
+          for (let i = 0; i < pwd.length; i++) {
+            maskedPwd += i % 2 === 0 ? pwd.charAt(i) : "*";
+          }
+          statusDisplay.innerHTML = `Draw! Your ID is ${userId} and part of your password is ${maskedPwd}`;
+          return;
+        }
+
+        // 현재 플레이어 변경
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+
+        // 상태 메시지 업데이트
+        if (currentPlayer === "X") {
+          statusDisplay.innerHTML = "플레이어의 턴입니다!";
+        } else {
+          statusDisplay.innerHTML = "컴퓨터의 턴입니다!";
+        }
+      }
+
+      // 각 셀에 이벤트 리스너 추가
+      document
+        .querySelectorAll(".cell")
+        .forEach((cell) => cell.addEventListener("click", handleCellClick));
+    </script>
+    <script>
+      document
+        .getElementById("login-btn")
+        .addEventListener("click", function () {
+          window.location.href = "{{ url_for('login') }}"; // 로그인 페이지로 이동
+        });
+    </script>
+  </body>
+</html>

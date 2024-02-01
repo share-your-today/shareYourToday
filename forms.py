@@ -35,7 +35,7 @@ class LoginForm(FlaskForm):
             self.user_not_found_message = user_not_found_message
             # 사용자 ID 오류 메시지 설정
             if account_locked_message is None:
-                account_locked_message = '계정이 잠겼습니다. 관리자에게 문의하세요.'
+                account_locked_message = '계정이 잠겼습니다. 비밀번호를 찾으세요'           
             self.account_locked_message = account_locked_message
             # 계정 잠김 메시지 설정
 
