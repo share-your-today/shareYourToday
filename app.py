@@ -142,6 +142,8 @@ def board():
 @app.route("/user_posts/<user_id>/")
 def user_posts(user_id):
     name = session.get("name", None)
+    form = BoardForm()  # BoardForm 객체를 생성합니다.
+    
     if user_id:
         user_posts = (
             Board.query.filter_by(user_id=user_id)
@@ -149,7 +151,7 @@ def user_posts(user_id):
             .all()
         )
         return render_template(
-            "board.html", data=user_posts, user_id=user_id, name=name
+            "board.html", data=user_posts, user_id=user_id, name=name, form=form
         )
     else:
         return render_template("error.html", message="유저 아이디가 유효하지 않습니다.")
