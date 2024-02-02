@@ -203,6 +203,8 @@
       integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
       crossorigin="anonymous"
     />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1hb1Tcrc8+31tW5Rp2q2lTQ/MAVplfJ8kq2Ys4" crossorigin="anonymous"></script>
   </head>
 
   <body data-bs-theme="dark">
@@ -395,6 +397,23 @@
                         }, 600);
                     }
                 }, 1000);
+
+                var myModal = document.getElementById('exampleModal');
+
+          $('#exampleModal').on('show.bs.modal', function (e) {
+            // 폼 요소를 찾아서 초기화합니다.
+            var form = this.querySelector('form');
+            form.reset(); // 폼을 리셋합니다.
+            form.querySelectorAll('.is-invalid, .is-valid').forEach(function (el) {
+              el.classList.remove('is-invalid', 'is-valid'); // 유효성 검사 클래스 제거
+            });
+            form.querySelectorAll('.invalid-feedback, .valid-feedback').forEach(function (el) {
+              el.textContent = ''; // 유효성 검사 피드백 메시지 제거
+            });
+            // 기타 필요한 초기화 코드를 추가합니다.
+          });
+
+
             });
         </script>
     </script>
