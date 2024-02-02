@@ -210,6 +210,53 @@ def board_delete(board_id):
 
     return redirect(url_for("board"))
 
+# 댓글 추가,수정,삭제
+@app.route("/add_reply/<int:board_id>/", methods=["GET","POST"])
+def add_reply(board_id):
+    user_id = session.get('user_id', '')
+    if user_id == '':
+        print("잘못된 접근. 다시로그인") # 지울것
+        return render_template("login.html")
+
+    text = request.form.get('reply_text')
+    
+    if (text == None):
+        print("===================text is none") # 지울것
+        
+        return redirect(url_for("board_detail",board_id=board_id))
+    
+    elif text != '':
+        print("===================good") # 지울것
+        print(text) # 지울것
+        
+        board_reply = Board_Reply(
+            content = text,
+            board_id = board_id,
+            user_id = user_id
+        )
+        
+        db.session.add(board_reply)
+        db.session.commit()
+        print(text, board_id, user_id) # 지울것
+        
+        return redirect(url_for("board_detail",board_id=board_id))
+    
+@app.route("/edit_reply/<int:board_id>/<int:reply_id>", methods=["GET","POST"])
+def edit_reply(reply_id, board_id):
+    reply = Board_Reply.query.get_or_404(reply_id)
+    msg = request.form.get('edited_reply')
+    
+    reply.content = msg
+    reply.updated_dttm = datetime.utcnow()
+    db.session.commit()
+    return redirect(url_for("board_detail",board_id=board_id))
+
+@app.route("/del_reply/<int:board_id>/<int:reply_id>/", methods=["GET","POST"])
+def del_reply(reply_id, board_id):
+    reply = Board_Reply.query.get_or_404(reply_id)
+    db.session.delete(reply)
+    db.session.commit()
+    return redirect(url_for("board_detail",board_id=board_id))
 
 # 채팅 관련
 @app.route("/chat/")
