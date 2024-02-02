@@ -19,9 +19,18 @@ from functools import wraps
 
 app = Flask(__name__)
 
-messages = []
+basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로
+dbfile = os.path.join(basedir, "db.sqlite")  # 데이터베이스 파일 경로 설정
 
-# 세션 로그린 여부 확인
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + dbfile
+app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True  # 요청 종료 시 자동 커밋
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # 수정사항 추적 비활성화
+app.config["SECRET_KEY"] = "wcsfeufhwiquehfdx"  # CSRF 및 세션을 위한 비밀 키
+app.config["SESSION_PERMANENT"] = False
+
+db.init_app(app)
+with app.app_context():
+    db.create_all()  # DB 초기화
 
 
 @app.before_request
@@ -250,7 +259,8 @@ def del_reply(reply_id, board_id):
 # 채팅 관련
 @app.route("/chat/")
 def chat():
-    return render_template("chat.html")
+    name = session.get("name", None)
+    return render_template("chat.html", name = name)
 
 
 # 채팅 메시지를 받는 라우트
@@ -309,17 +319,4 @@ def find_pw(user_id):
 
 
 if __name__ == "__main__":
-    basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로
-    dbfile = os.path.join(basedir, "db.sqlite")  # 데이터베이스 파일 경로 설정
-
-    # 애플리케이션 설정
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + dbfile
-    app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True  # 요청 종료 시 자동 커밋
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # 수정사항 추적 비활성화
-    app.config["SECRET_KEY"] = "wcsfeufhwiquehfdx"  # CSRF 및 세션을 위한 비밀 키
-    app.config["SESSION_PERMANENT"] = False
-
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()  # DB 초기화
     app.run(debug=True, port=8001)  # 디버그 모드로 서버 실행, 포트 8001
