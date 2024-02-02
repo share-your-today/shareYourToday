@@ -88,9 +88,14 @@
           <div class="row mt-5">
             <div class="col-12">
               <!-- 로그인 실패 횟수 표시 -->
-              {% if fail_count > 0 and fail_count < 5 %}
+              {% if fail_count > 0 %}
               <div class="alert alert-warning">
-                로그인 실패 횟수: {{ fail_count }}
+                로그인 실패 횟수: {{ fail_count }} {% if fail_count >= 5 %} {%
+                if fail_count >= 5 %}
+                <a href="{{ url_for('find_pw', user_id=user_id) }}"
+                  >비밀번호 찾기</a
+                >
+                {% endif %} {% endif %}
               </div>
               {% endif %}
               <form method="POST">
@@ -106,10 +111,11 @@
                 </div>
                 <div class="form-group">
                   {{ form.pwd.label("비밀번호") }} {{
-                  form.pwd(class="form-control", placeholder="비밀번호") }} {%
+                  form.pwd(class="form-control", placeholder="비밀번호") }} 
+                  {%
                   if form.pwd.errors %}
                   <div class="alert alert-danger mt-2">
-                    {{ form.pwd.errors[0] }}
+                    {{ form.pwd.errors[0]|safe }}
                   </div>
                   {% endif %}
                 </div>
