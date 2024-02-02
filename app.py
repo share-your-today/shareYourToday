@@ -27,7 +27,7 @@ messages = []
 @app.before_request
 def check_logged_in():
     # 로그인이 필요하지 않은 경로 리스트
-    allowed_routes = ["login", "static", "home", "register","find_pw"]
+    allowed_routes = ["login", "static", "home", "register", "find_pw"]
 
     if "user_id" not in session and request.endpoint not in allowed_routes:
         return redirect(url_for("login"))
@@ -47,7 +47,7 @@ def home():
 def login():
     form = LoginForm()
     fail_count = 0
-    user_id=""
+    user_id = ""
     if form.validate_on_submit():
         user = Member.query.filter_by(user_id=form.user_id.data).first()
         if user:
@@ -61,14 +61,18 @@ def login():
         # 로그인 실패시 해당 유저가 있는지 확인
         user = Member.query.filter_by(user_id=form.user_id.data).first()
         if user:
-            user_id=user.user_id
+            user_id = user.user_id
             user.fail_count += 1
-            fail_count=user.fail_count
+            fail_count = user.fail_count
             db.session.commit()
-            if(user.fail_count>=5):
+            if user.fail_count >= 5:
                 if form.validate_on_submit():
-                    return render_template('login.html', form=form, fail_count=fail_count, user_id=user_id)
-    return render_template('login.html', form=form, fail_count=fail_count,user_id=user_id)
+                    return render_template(
+                        "login.html", form=form, fail_count=fail_count, user_id=user_id
+                    )
+    return render_template(
+        "login.html", form=form, fail_count=fail_count, user_id=user_id
+    )
 
 
 @app.route("/logout", methods=["GET"])
@@ -151,14 +155,11 @@ def board_detail(board_id):
     return render_template("board_detail.html", data=data, name=name, user_id=user_id)
 
 
-@app.route("/board_create", methods=["POST", "GET"])
+@app.route("/board_create", methods=["GET", "POST"])
 def board_create():
     user_id = session.get("user_id", None)
     form = BoardForm()
-
-    is_open = False
     if request.method == "POST":
-        print("POST METHOD start")
         if form.validate_on_submit():
             board = Board(
                 title=form.title.data,
@@ -168,22 +169,10 @@ def board_create():
             )
             db.session.add(board)
             db.session.commit()
-            print("POST METHOD end")
+            
             return redirect(url_for("board"))
-
-        else:
-            if form.errors:
-                is_open = True
-                print("POST METHOD end")
-
-    elif request.method == "GET":
-        print("GET METHOD start")
-        form = BoardForm()  # GET 요청 시 새로운 폼 인스턴스 생성
-        is_open = False
-        print("GET METHOD end")
-
-    boards = Board.query.all()  # 데이터베이스에서 게시물 목록을 가져옴
-    return render_template("board.html", data=boards, form=form, is_open=is_open)
+        boards = Board.query.all()  # 데이터베이스에서 게시물 목록을 가져옴
+    return render_template("board.html", data=boards, form=form)
 
 
 @app.route("/board_update/<int:board_id>/", methods=["POST"])
@@ -309,13 +298,14 @@ def get_messages():
         }
     )
 
-@app.route('/find_pw/<user_id>')
+
+@app.route("/find_pw/<user_id>")
 def find_pw(user_id):
-    user=Member.query.filter_by(user_id=user_id).first()
-    pwd=user.pwd
-    user.fail_count=0
+    user = Member.query.filter_by(user_id=user_id).first()
+    pwd = user.pwd
+    user.fail_count = 0
     db.session.commit()
-    return render_template('find_pw.html', user_id=user_id,pwd=pwd)
+    return render_template("find_pw.html", user_id=user_id, pwd=pwd)
 
 
 if __name__ == "__main__":

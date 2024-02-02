@@ -272,14 +272,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                        {% for message in messages %}
-                        <div class="alert alert-danger">{{ message }}</div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                        <form action="{{ url_for('board_create') }}" method="post">
+                      <form action="{{ url_for('board_create') }}" method="POST">
                             {{ form.hidden_tag() }}
                             <div class="mb-3">
                                 {{ form.title.label(class="form-label") }}
@@ -381,11 +374,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-                // is_open 변수 값에 따라 모달을 열거나 닫습니다.
-                {% if is_open %}
-                var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                myModal.show();
-                {% endif %}
 
                 // 기존 Flash 메시지 숨기는 코드
                 setTimeout(function () {
@@ -397,23 +385,6 @@
                         }, 600);
                     }
                 }, 1000);
-
-                var myModal = document.getElementById('exampleModal');
-
-          $('#exampleModal').on('show.bs.modal', function (e) {
-            // 폼 요소를 찾아서 초기화합니다.
-            var form = this.querySelector('form');
-            form.reset(); // 폼을 리셋합니다.
-            form.querySelectorAll('.is-invalid, .is-valid').forEach(function (el) {
-              el.classList.remove('is-invalid', 'is-valid'); // 유효성 검사 클래스 제거
-            });
-            form.querySelectorAll('.invalid-feedback, .valid-feedback').forEach(function (el) {
-              el.textContent = ''; // 유효성 검사 피드백 메시지 제거
-            });
-            // 기타 필요한 초기화 코드를 추가합니다.
-          });
-
-
             });
         </script>
     </script>
