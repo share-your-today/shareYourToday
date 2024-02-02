@@ -8,6 +8,21 @@
   <style>
     @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css");
 
+    :root {
+      --primary-color: #007bff;
+      /* 새로운 악센트 색상으로 변경 */
+      --text-color: #333;
+      /* 보다 어두운 텍스트 색상으로 변경 */
+      --background-color: #f8f9fa;
+      /* 배경 색상을 밝은 회색으로 변경 */
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      color: var(--text-color);
+      background-color: var(--background-color);
+    }
+
     .background-banner {
       background-image: linear-gradient(45deg,
           rgb(51 43 43 / 75%),
@@ -52,6 +67,8 @@
     }
 
     .feed_card_container {
+      background-color: #fff;
+      /* White background */
       display: inline-flex;
       flex-direction: column;
       margin: 0 0 24px;
@@ -59,10 +76,16 @@
     }
 
     .card_content_wrapper {
+      /* 그림자 추가 */
       border: 1px solid #e9ecef;
       border-radius: 8px;
       max-width: 100%;
       height: auto;
+      margin-bottom: 1rem;
+      /* 여백 추가 */
+      border-radius: 10px;
+      /* 모서리 둥글게 */
+      padding: 1rem;
     }
 
     .card_content {
@@ -82,6 +105,8 @@
     }
 
     .card_content_review {
+      color: var(--text-color);
+      /* Ensuring all text uses the light color */
       display: flex;
       flex-direction: column;
       align-items: start;
@@ -90,6 +115,8 @@
     }
 
     .card_content_reply {
+      color: var(--text-color);
+      /* Ensuring all text uses the light color */
       display: flex;
       flex-direction: column;
       align-items: start;
@@ -105,6 +132,8 @@
       padding: 16px 0;
       width: 100%;
       height: 72px;
+      padding: 20px;
+      /* 패딩 조정 */
     }
 
     .card_header_left {
@@ -122,6 +151,25 @@
       width: 100%;
     }
 
+    .card_header_title h4,
+    /* Adjusting the title font size and weight */
+    .card_content_review h4 {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .btn-custom,
+    .btn-danger {
+      border: 1px solid #fff;
+      /* Adding border to buttons for visibility */
+    }
+
+    .card_header_sub,
+    .card_content_review p,
+    .card_content_reply {
+      font-size: 14px;
+    }
+
     .reviewerImg {
       width: 50px;
       height: 50px;
@@ -130,6 +178,8 @@
     }
 
     .card_header_sub {
+      color: var(--text-color);
+      /* Ensuring all text uses the light color */
       display: flex;
       font-size: 12px;
     }
@@ -171,6 +221,8 @@
     }
 
     .replyerName {
+      color: var(--text-color);
+      /* Ensuring all text uses the light color */
       margin-left: 15px;
     }
 
@@ -180,13 +232,23 @@
     }
 
     .btn-custom {
-      background-color: transparent;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
       border-color: #00b2b2;
+      border-radius: 0.25rem;
       color: #00b2b2;
-      transition: background-color 0.3s;
+      padding: 0.5rem 1rem;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
       font-size: 12px;
       margin-right: 20px;
     }
+
+    .btn-custom:hover,
+    .btn-custom:focus {
+      background-color: darken(var(--primary-color), 10%);
+    }
+
     .edit_btn {
       float: right;
       margin-top: 5px;
@@ -199,11 +261,27 @@
       margin-right: 10px;
     }
 
+    .card_header_act {
+      color: var(--text-color);
+      /* Ensuring all text uses the light color */
+    }
+
     .reply_container {
       overflow-x: unset;
       overflow-y: auto;
-      height: 700px;
+      /* Remove fixed height to allow dynamic expansion */
+      max-height: none;
+      overflow-y: auto;
+      /* Keeps the scrollbar if content overflows */
+      /* other styles... */
       border: 1px solid #ccc;
+    }
+
+    input[type="text"],
+    textarea {
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+      padding: 0.5rem;
     }
   </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
@@ -213,36 +291,24 @@
 
 <body data-bs-theme="dark">
   <div class="background-banner">
-    <nav
-    class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between"
-    data-bs-theme="dark"
-  >
-    <div class="ms-3">
-      <img
-        src="{{ url_for('static', filename='logo.png') }}"
-        width="130"
-        height="130"
-        alt=""
-      />
-    </div>
-    <div class="me-3 d-flex flex-column align-items-center">
-      <span>{{ name }}님 로그인 중</span>
-      <button
-        type="button"
-        class="btn btn-danger mt-2"
-        onclick="location.href='/logout' "
-      >
-        로그아웃
-      </button>
-    </div>
-  </nav>
+    <nav class="navbar border-bottom border-bottom-dark d-flex justify-content-space-between" data-bs-theme="dark">
+      <div class="ms-3">
+        <img src="{{ url_for('static', filename='logo.png') }}" width="130" height="130" alt="" />
+      </div>
+      <div class="me-3 d-flex flex-column align-items-center">
+        <span>{{ name }}님 로그인 중</span>
+        <button type="button" class="btn btn-danger mt-2" onclick="location.href='/logout' ">
+          로그아웃
+        </button>
+      </div>
+    </nav>
     <!-- 피드 -->
     <div class="container2">
-        <div class="mt-2 ms-2">
-          <a href="{{ url_for('board') }}">
-            <img src="{{ url_for('static', filename='backarrow.png') }}" width="40" height="40" alt="" class="ml-3" />
-          </a>
-        </div>
+      <div class="mt-2 ms-2">
+        <a href="{{ url_for('board') }}">
+          <img src="{{ url_for('static', filename='backarrow.png') }}" width="40" height="40" alt="" class="ml-3" />
+        </a>
+      </div>
       <div class="feed_container">
         <div class="feed_card_container">
           <section class="card_header">
@@ -281,7 +347,14 @@
               </div>
             </div>
           </div>
-
+          <!-- 댓글입력 -->
+          <div>
+            <form action="{{url_for('add_reply', board_id=data.board.board_id)}}" method="POST">
+              <textarea name="reply_text" id="reply_input" autocomplete="off" rows="5" cols="100"
+                placeholder="댓글을 입력하세요." sytle="resize: none; wrap:soft;" required></textarea>
+              <button id="send_reply_btn" type="submit">댓글 쓰기</button>
+            </form>
+          </div>
           <!-- 댓글 등록 및 출력 부분 -->
           <h3>댓글 목록</h3>
           <br>
@@ -343,17 +416,6 @@
             <hr>
             {% endfor %}
           </div>
-
-          <!-- 댓글입력 -->
-          <div>
-            <form action="{{url_for('add_reply', board_id=data.board.board_id)}}" method="POST">
-              <textarea name="reply_text" id="reply_input" autocomplete="off" rows="5" cols="100"
-                placeholder="댓글을 입력하세요." sytle="resize: none; wrap:soft;" required></textarea>
-              <button id="send_reply_btn" type="submit">댓글 쓰기</button>
-            </form>
-          </div>
-
-
         </div>
       </div>
     </div>
@@ -370,36 +432,36 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-        <div class="modal-body">
-          <form id="updateForm" action="{{ url_for('board_update',board_id=data.board.board_id )}}" method="POST">
-            <div class="mb-3">
-              <label for="title" class="form-label">제목</label>
-              <input type="text" class="form-control" id="title" name="title" value="{{ data.board.title }}" />
-            </div>
-            <div class="mb-3">
-              <label for="content" class="form-label">일기내용</label>
-              <textarea class="form-control" id="content" name="content">
+          <div class="modal-body">
+            <form id="updateForm" action="{{ url_for('board_update',board_id=data.board.board_id )}}" method="POST">
+              <div class="mb-3">
+                <label for="title" class="form-label">제목</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ data.board.title }}" />
+              </div>
+              <div class="mb-3">
+                <label for="content" class="form-label">일기내용</label>
+                <textarea class="form-control" id="content" name="content">
 {{ data.board.content }}</textarea>
+              </div>
+              <div class="mb-3">
+                <label for="image_url" class="form-label">사진 주소</label>
+                <!-- board 객체의 image_url 속성으로 value를 설정 -->
+                <input type="text" class="form-control" id="image_url" name="image_url"
+                  value="{{ data.board.image_url }}" />
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-auto">
+                <button type="submit" form="updateForm" class="btn btn-danger">수정하기</button>
+              </div>
+              <div class="col-auto">
+                <!-- 삭제 폼 -->
+                <form action="{{ url_for('board_delete', board_id=data.board.board_id) }}" method="POST"
+                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                  <button type="submit" class="btn btn-danger">삭제하기</button>
+                </form>
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="image_url" class="form-label">사진 주소</label>
-              <!-- board 객체의 image_url 속성으로 value를 설정 -->
-              <input type="text" class="form-control" id="image_url" name="image_url"
-                value="{{ data.board.image_url }}" />
-            </div>
-          </form>
-          <div class="row">
-            <div class="col-auto">
-              <button type="submit" form="updateForm" class="btn btn-danger">수정하기</button>
-            </div>
-            <div class="col-auto">
-              <!-- 삭제 폼 -->
-              <form action="{{ url_for('board_delete', board_id=data.board.board_id) }}" method="POST"
-                onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                <button type="submit" class="btn btn-danger">삭제하기</button>
-              </form>
-            </div>
-          </div>
           </div>
         </div>
       </div>
@@ -413,24 +475,23 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-    crossorigin="anonymous">
-  
-  </script>
-    <!-- 댓글입력시 커서 초기화 -->
-    <script>
-      window.onload = function () {
-        var textarea = document.getElementById("reply_input");
-        var firstclick = true;
-        textarea.setSelectionRange(0, 0);
-        if (firstclick) {
-          textarea.addEventListener('click', function () {
-            textArea.setSelectionRange(textArea.value.length, textArea.value.length);
-            firstclick = false;
-          })
-        }
-      }
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+
     </script>
+  <!-- 댓글입력시 커서 초기화 -->
+  <script>
+    window.onload = function () {
+      var textarea = document.getElementById("reply_input");
+      var firstclick = true;
+      textarea.setSelectionRange(0, 0);
+      if (firstclick) {
+        textarea.addEventListener('click', function () {
+          textArea.setSelectionRange(textArea.value.length, textArea.value.length);
+          firstclick = false;
+        })
+      }
+    }
+  </script>
 </body>
 
 </html>
