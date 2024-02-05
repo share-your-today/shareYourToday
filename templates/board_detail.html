@@ -363,8 +363,9 @@
             {% for reply in data.reply %}
             <div class="edit_btn">
               {% if session.get('user_id')== reply.user_id %}
-              <button data-bs-toggle="modal" data-bs-target="#reply_editModal">수정</button>
+              <button data-bs-toggle="modal" data-bs-target="#reply_editModal{{reply.reply_id}}">수정</button>
               {% endif %}
+<<<<<<< Updated upstream
               <!-- 댓글수정모달 -->
               <div class="modal fade" id="reply_editModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
@@ -390,6 +391,9 @@
                   </div>
                 </div>
               </div>
+=======
+
+>>>>>>> Stashed changes
               <!-- 댓글삭제 -->
               {% if session.get('user_id')== reply.user_id %}
               <form action="{{ url_for('board.del_reply', reply_id = reply.reply_id, board_id=data.board.board_id) }}"
@@ -412,7 +416,31 @@
             <div class="card_reply_right">
               <span class="card_reply_time">{{ reply.updated_dttm.strftime('%Y.%m.%d') }}</span>
             </div>
-            </section>
+            <!-- 댓글수정모달 -->
+            <div class="modal fade" id="reply_editModal{{reply.reply_id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                      댓글 수정하기
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="{{ url_for('edit_reply',reply_id=reply.reply_id, board_id=data.board.board_id )}}"
+                      method="POST">
+                      <label sytle="margin-top:10" for="title" class="form-label">내용 </label>
+                      <div class="mb-3">
+                        <textarea id="edit_reply_input" name="edited_reply" rows="5" cols="60" autocomplete="off"
+                          placeholder="수정할 내용을 입력하세요" required> {{ reply.content }} </textarea>
+                      </div>
+                      <button style="float:right; margin-bottom: 10;" type="submit">수정하기</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             <hr>
             {% endfor %}
           </div>
