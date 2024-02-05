@@ -304,11 +304,11 @@
     </nav>
     <!-- 피드 -->
     <div class="container2">
-      <div class="mt-2 ms-2">
-        <a href="{{ url_for('board') }}">
-          <img src="{{ url_for('static', filename='backarrow.png') }}" width="40" height="40" alt="" class="ml-3" />
-        </a>
-      </div>
+        <div class="mt-2 ms-2">
+          <a href="{{ url_for('board.board') }}">
+            <img src="{{ url_for('static', filename='backarrow.png') }}" width="40" height="40" alt="" class="ml-3" />
+          </a>
+        </div>
       <div class="feed_container">
         <div class="feed_card_container">
           <section class="card_header">
@@ -377,7 +377,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <form action="{{ url_for('edit_reply',reply_id=reply.reply_id, board_id=data.board.board_id )}}"
+                      <form action="{{ url_for('board.edit_reply',reply_id=reply.reply_id, board_id=data.board.board_id )}}"
                         method="POST">
                         <label sytle="margin-top:10" for="title" class="form-label">내용 </label>
                         <div class="mb-3">
@@ -392,7 +392,7 @@
               </div>
               <!-- 댓글삭제 -->
               {% if session.get('user_id')== reply.user_id %}
-              <form action="{{ url_for('del_reply', reply_id = reply.reply_id, board_id=data.board.board_id) }}"
+              <form action="{{ url_for('board.del_reply', reply_id = reply.reply_id, board_id=data.board.board_id) }}"
                 method="POST" onsubmit="return confirm('삭제하시겠습니까?');">
                 <button type="submit">삭제</button>
               </form>
@@ -416,6 +416,17 @@
             <hr>
             {% endfor %}
           </div>
+
+          <!-- 댓글입력 -->
+          <div>
+            <form action="{{url_for('board.add_reply', board_id=data.board.board_id)}}" method="POST">
+              <textarea name="reply_text" id="reply_input" autocomplete="off" rows="5" cols="100"
+                placeholder="댓글을 입력하세요." sytle="resize: none; wrap:soft;" required></textarea>
+              <button id="send_reply_btn" type="submit">댓글 쓰기</button>
+            </form>
+          </div>
+
+
         </div>
       </div>
     </div>
@@ -432,36 +443,36 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-          <div class="modal-body">
-            <form id="updateForm" action="{{ url_for('board_update',board_id=data.board.board_id )}}" method="POST">
-              <div class="mb-3">
-                <label for="title" class="form-label">제목</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ data.board.title }}" />
-              </div>
-              <div class="mb-3">
-                <label for="content" class="form-label">일기내용</label>
-                <textarea class="form-control" id="content" name="content">
-{{ data.board.content }}</textarea>
-              </div>
-              <div class="mb-3">
-                <label for="image_url" class="form-label">사진 주소</label>
-                <!-- board 객체의 image_url 속성으로 value를 설정 -->
-                <input type="text" class="form-control" id="image_url" name="image_url"
-                  value="{{ data.board.image_url }}" />
-              </div>
-            </form>
-            <div class="row">
-              <div class="col-auto">
-                <button type="submit" form="updateForm" class="btn btn-danger">수정하기</button>
-              </div>
-              <div class="col-auto">
-                <!-- 삭제 폼 -->
-                <form action="{{ url_for('board_delete', board_id=data.board.board_id) }}" method="POST"
-                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                  <button type="submit" class="btn btn-danger">삭제하기</button>
-                </form>
-              </div>
+        <div class="modal-body">
+          <form id="updateForm" action="{{ url_for('board.board_update',board_id=data.board.board_id )}}" method="POST">
+            <div class="mb-3">
+              <label for="title" class="form-label">제목</label>
+              <input type="text" class="form-control" id="title" name="title" value="{{ data.board.title }}" />
             </div>
+            <div class="mb-3">
+              <label for="content" class="form-label">일기내용</label>
+              <textarea class="form-control" id="content" name="content">
+{{ data.board.content }}</textarea>
+            </div>
+            <div class="mb-3">
+              <label for="image_url" class="form-label">사진 주소</label>
+              <!-- board 객체의 image_url 속성으로 value를 설정 -->
+              <input type="text" class="form-control" id="image_url" name="image_url"
+                value="{{ data.board.image_url }}" />
+            </div>
+          </form>
+          <div class="row">
+            <div class="col-auto">
+              <button type="submit" form="updateForm" class="btn btn-danger">수정하기</button>
+            </div>
+            <div class="col-auto">
+              <!-- 삭제 폼 -->
+              <form action="{{ url_for('board.board_delete', board_id=data.board.board_id) }}" method="POST"
+                onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <button type="submit" class="btn btn-danger">삭제하기</button>
+              </form>
+            </div>
+          </div>
           </div>
         </div>
       </div>

@@ -89,6 +89,23 @@
                 <button type="button" class="btn btn-danger mt-2" onclick="location.href='/logout' ">로그아웃</button>
             </div>
         </nav>
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages() %} {% if messages %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <div class="w-100">
+                                {% for message in messages %}
+                                <div class="alert alert-success text-center" role="alert">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %} {% endwith %}
+            </div>
         <div id="chat">
             <form id="messageForm">
                 <input type="text" id="messageInput" placeholder="메세지를 입력하세요!">
@@ -114,7 +131,7 @@
 
         // 메시지를 서버로 전송하는 함수
         const sendMessage = async (message) => {
-            await fetch('/send', {
+            await fetch('/chat/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -125,7 +142,7 @@
 
         // 채팅 메시지를 주기적으로 가져오는 함수
         const getMessages = async () => {
-            const response = await fetch('/get_messages');
+            const response = await fetch('/chat/get_messages');
             const data = await response.json();
 
             // 가져온 메시지를 화면에 추가 (맨 앞에 추가)
@@ -158,7 +175,7 @@
 
             // 주기적으로 메시지 폴링
             setInterval(async () => {
-                const response = await fetch(`/get_messages?timestamp=${lastTimestamp}`);
+                const response = await fetch(`/chat/get_messages?timestamp=${lastTimestamp}`);
                 const data = await response.json();
 
                 // 가져온 메시지를 화면에 추가 (맨 앞에 추가)

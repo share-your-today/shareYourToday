@@ -272,7 +272,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <form action="{{ url_for('board_create') }}" method="POST">
+                      <form action="{{ url_for('board.board_create') }}" method="POST">
                             {{ form.hidden_tag() }}
                             <div class="mb-3">
                                 {{ form.title.label(class="form-label") }}
@@ -317,7 +317,7 @@
                 <div class="card_header_title">
                   <div class="card_header_act">
                     <a
-                      href="{{ url_for('user_posts', user_id=board.user_id) }}"
+                      href="{{ url_for('board.user_posts', user_id=board.user_id) }}"
                     >
                       <strong>{{ board.user_id }}</strong>
                     </a>
@@ -334,7 +334,7 @@
             <div class="card_content_wrapper">
               <div class="card_content">
                 <a
-                  href="{{ url_for('board_detail', board_id=board.board_id) }}"
+                  href="{{ url_for('board.board_detail', board_id=board.board_id) }}"
                 >
                   <img
                     class="card_content_img"
@@ -344,10 +344,10 @@
                 <hr />
                 <div class="card_content_review">
                   <a
-                    href="{{ url_for('board_detail', board_id=board.board_id) }}"
+                    href="{{ url_for('board.board_detail', board_id=board.board_id) }}"
                   >
                     <h4>{{ board.title }}</h4>
-                    <p>{{ board.content }}</p>
+                             <p>{{ board.content }}</p>
                   </a>
                 </div>
               </div>

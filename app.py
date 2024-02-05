@@ -1,6 +1,5 @@
 from flask import (
     Flask,
-    render_template,
     request,
     redirect,
     url_for,
@@ -9,41 +8,45 @@ from flask import (
     jsonify,
 )
 import os
-import time
-from forms import RegisterForm, LoginForm, BoardForm
-from flask_wtf.csrf import CSRFProtect
-from flask_sqlalchemy import SQLAlchemy
-from models import db, Member, Board, Board_Reply, Message
-from datetime import datetime, timezone, timedelta
+from models import db
 from functools import wraps
+from endpoint import users, board, chat
+
+from exception import DBException
+
 
 app = Flask(__name__)
+app.register_blueprint(users.bp)
+app.register_blueprint(board.bp)
+app.register_blueprint(chat.bp)
 
-messages = []
+
 
 # 세션 로그린 여부 확인
 basedir = os.path.abspath(os.path.dirname(__file__))  # 현재 파일의 절대 경로
 dbfile = os.path.join(basedir, "db.sqlite")  # 데이터베이스 파일 경로 설정
 
-    # 애플리케이션 설정
+# 애플리케이션 설정
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + dbfile
 app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True  # 요청 종료 시 자동 커밋
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # 수정사항 추적 비활성화
 app.config["SECRET_KEY"] = "wcsfeufhwiquehfdx"  # CSRF 및 세션을 위한 비밀 키
 app.config["SESSION_PERMANENT"] = False
 
+
 db.init_app(app)
 with app.app_context():
     db.create_all()  # DB 초기화
 
+
 @app.before_request
 def check_logged_in():
     # 로그인이 필요하지 않은 경로 리스트
-    allowed_routes = ["login", "static", "home", "register", "find_pw"]
+    allowed_routes = ["users.login" ,"login", "static", "home", "register", "find_pw"]
 
     if "user_id" not in session and request.endpoint not in allowed_routes:
-        return redirect(url_for("login"))
-
+        return redirect(url_for("users.login"))
+    
 
 @app.route("/")
 def home():
@@ -53,280 +56,6 @@ def home():
     if name is None:
         return redirect("/login")  # 로그인하지 않은 사용자는 로그인 페이지로 리디렉션
     return redirect("/board")
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    fail_count = 0
-    user_id = ""
-    if form.validate_on_submit():
-        user = Member.query.filter_by(user_id=form.user_id.data).first()
-        if user:
-            # 로그인 성공 처리
-            user.fail_count = 0
-            db.session.commit()
-            session["user_id"] = user.user_id
-            session["name"] = user.name
-            return redirect("/board")
-    else:
-        # 로그인 실패시 해당 유저가 있는지 확인
-        user = Member.query.filter_by(user_id=form.user_id.data).first()
-        if user:
-            user_id = user.user_id
-            user.fail_count += 1
-            fail_count = user.fail_count
-            db.session.commit()
-            if user.fail_count >= 5:
-                if form.validate_on_submit():
-                    return render_template(
-                        "login.html", form=form, fail_count=fail_count, user_id=user_id
-                    )
-    return render_template(
-        "login.html", form=form, fail_count=fail_count, user_id=user_id
-    )
-
-
-@app.route("/logout", methods=["GET"])
-def logout():
-    session.clear()
-    return redirect("/login")
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    form = RegisterForm()
-    if request.method == "POST" and form.validate():
-        user_id = form.user_id.data
-        name = form.name.data
-        pwd = form.pwd.data
-
-        if Member.query.filter_by(user_id=user_id).first() is not None:
-            flash("이미 존재하는 사용자 아이디입니다.")
-            return redirect(url_for("register"))
-
-        try:
-            member = Member(user_id=user_id, name=name, pwd=pwd)
-            db.session.add(member)
-            db.session.commit()
-            flash("회원가입이 성공했습니다! ")
-
-            # 자동 로그인을 위한 세션 설정
-            session["user_id"] = user_id
-            session["name"] = name
-
-            return redirect(url_for("board"))
-        except Exception as e:
-            db.session.rollback()
-            flash("데이터베이스 저장 중 오류가 발생했습니다.")
-            app.logger.error("Error on registration: %s", str(e))
-    else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(error)
-    return render_template("register.html", form=form)
-
-
-@app.route("/board/")
-def board():
-    name = session.get("name", None)
-    user_id = session.get("user_id", None)
-    form = BoardForm()  # BoardForm 객체를 생성합니다.
-
-    board = Board.query.order_by(Board.created_dttm.desc()).all()
-    return render_template(
-        "board.html", data=board, name=name, user_id=user_id, form=form
-    )
-
-
-@app.route("/user_posts/<user_id>/")
-def user_posts(user_id):
-    name = session.get("name", None)
-    form = BoardForm()  # BoardForm 객체를 생성합니다.
-    
-    if user_id:
-        user_posts = (
-            Board.query.filter_by(user_id=user_id)
-            .order_by(Board.created_dttm.desc())
-            .all()
-        )
-        return render_template(
-            "board.html", data=user_posts, user_id=user_id, name=name, form=form
-        )
-    else:
-        return render_template("error.html", message="유저 아이디가 유효하지 않습니다.")
-
-
-@app.route("/board_detail/<int:board_id>/")
-def board_detail(board_id):
-    name = session.get("name", None)
-    user_id = session.get("user_id", None)
-    board = Board.query.get(board_id)
-    reply = Board_Reply.query.filter_by(board_id=board_id).all()
-    data = {"board": board, "reply": reply}
-    return render_template("board_detail.html", data=data, name=name, user_id=user_id)
-
-
-@app.route("/board_create", methods=["GET", "POST"])
-def board_create():
-    user_id = session.get("user_id", None)
-    form = BoardForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            board = Board(
-                title=form.title.data,
-                content=form.content.data,
-                image_url=form.image_url.data,
-                user_id=user_id,
-            )
-            db.session.add(board)
-            db.session.commit()
-            
-            return redirect(url_for("board"))
-        boards = Board.query.all()  # 데이터베이스에서 게시물 목록을 가져옴
-    return render_template("board.html", data=boards, form=form)
-
-
-@app.route("/board_update/<int:board_id>/", methods=["POST"])
-def board_update(board_id):
-    title_receive = request.form.get("title")
-    content_receive = request.form.get("content")
-    image_receive = request.form.get("image_url")
-
-    board = Board.query.get_or_404(board_id)
-    board.title = title_receive
-    board.content = content_receive
-    board.image_url = image_receive
-
-    db.session.commit()
-
-    return redirect(url_for("board"))
-
-
-@app.route("/board_delete/<int:board_id>/", methods=["POST"])
-def board_delete(board_id):
-    board = Board.query.get(board_id)
-    db.session.delete(board)
-    db.session.commit()
-
-    return redirect(url_for("board"))
-
-# 댓글 추가,수정,삭제
-@app.route("/add_reply/<int:board_id>/", methods=["GET","POST"])
-def add_reply(board_id):
-    user_id = session.get('user_id', '')
-    if user_id == '':
-        print("잘못된 접근. 다시로그인") # 지울것
-        return render_template("login.html")
-
-    text = request.form.get('reply_text')
-    
-    if (text == None):
-        print("===================text is none") # 지울것
-        
-        return redirect(url_for("board_detail",board_id=board_id))
-    
-    elif text != '':
-        print("===================good") # 지울것
-        print(text) # 지울것
-        
-        board_reply = Board_Reply(
-            content = text,
-            board_id = board_id,
-            user_id = user_id
-        )
-        
-        db.session.add(board_reply)
-        db.session.commit()
-        print(text, board_id, user_id) # 지울것
-        
-        return redirect(url_for("board_detail",board_id=board_id))
-    
-@app.route("/edit_reply/<int:board_id>/<int:reply_id>", methods=["GET","POST"])
-def edit_reply(reply_id, board_id):
-    reply = Board_Reply.query.get_or_404(reply_id)
-    msg = request.form.get('edited_reply')
-    
-    reply.content = msg
-    reply.updated_dttm = datetime.utcnow()
-    db.session.commit()
-    return redirect(url_for("board_detail",board_id=board_id))
-
-@app.route("/del_reply/<int:board_id>/<int:reply_id>/", methods=["GET","POST"])
-def del_reply(reply_id, board_id):
-    reply = Board_Reply.query.get_or_404(reply_id)
-    db.session.delete(reply)
-    db.session.commit()
-    return redirect(url_for("board_detail",board_id=board_id))
-
-# 채팅 관련
-@app.route("/chat/")
-def chat():
-    name = session.get("name", None)
-    return render_template("chat.html",name=name)
-
-
-# 채팅 메시지를 받는 라우트
-@app.route("/send", methods=["POST"])
-def send():
-    user_id = session.get("user_id", None)
-    message = request.form.get("message")
-
-    utc_now = datetime.utcnow()
-    kst = timezone(timedelta(hours=9))
-    kst_now = utc_now.replace(tzinfo=timezone.utc).astimezone(kst)
-    timestamp = kst_now
-
-    new_message = Message(message=message, timestamp=timestamp, user_id=user_id)
-    db.session.add(new_message)
-    db.session.commit()
-
-    return jsonify(
-        {
-            "message": message,
-            "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "user_id": user_id,
-        }
-    )
-
-
-# 채팅 메시지를 받아오는 폴링 라우트
-@app.route("/get_messages")
-def get_messages():
-    client_timestamp_str = request.args.get("timestamp", "2000-01-01 00:00:00")
-    client_timestamp = datetime.strptime(client_timestamp_str, "%Y-%m-%d %H:%M:%S")
-
-    utc_now = datetime.utcnow()
-    kst = timezone(timedelta(hours=9))
-    latest_timestamp = utc_now.replace(tzinfo=timezone.utc).astimezone(kst)
-
-    new_messages = Message.query.filter(Message.timestamp > client_timestamp).all()
-
-    messages = [
-        {
-            "message": msg.message,
-            "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "user_id": msg.user_id,
-        }
-        for msg in new_messages
-    ]
-
-    return jsonify(
-        {
-            "messages": messages,
-            "latest_timestamp": latest_timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-        }
-    )
-
-
-@app.route("/find_pw/<user_id>")
-def find_pw(user_id):
-    user = Member.query.filter_by(user_id=user_id).first()
-    pwd = user.pwd
-    user.fail_count = 0
-    db.session.commit()
-    return render_template("find_pw.html", user_id=user_id, pwd=pwd)
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=8001)  # 디버그 모드로 서버 실행, 포트 8001

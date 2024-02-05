@@ -1,8 +1,8 @@
-from typing import Any
-from flask_wtf import FlaskForm
-from models import Member
+from flask_wtf.form import FlaskForm
 from wtforms.validators import ValidationError, DataRequired, EqualTo
 from wtforms import StringField, PasswordField
+
+from models import Member
 
 
 class RegisterForm(FlaskForm):
@@ -27,7 +27,9 @@ class LoginForm(FlaskForm):
     # 로그인 폼을 정의합니다.
     class UserPassword(object):
         # 사용자 비밀번호 검증을 위한 커스텀 검증 클래스
-        def __init__(self, message=None, user_not_found_message=None, account_locked_message=None):
+        def __init__(
+            self, message=None, user_not_found_message=None, account_locked_message=None
+        ):
             # 초기화 메서드
             if message is None:
                 message = "잘못된 비밀번호"
@@ -38,13 +40,11 @@ class LoginForm(FlaskForm):
             self.user_not_found_message = user_not_found_message
             # 사용자 ID 오류 메시지 설정
             if account_locked_message is None:
-                account_locked_message = '계정이 잠겼습니다. 비밀번호를 찾으세요'           
+                account_locked_message = "계정이 잠겼습니다. 비밀번호를 찾으세요"
             self.account_locked_message = account_locked_message
             # 계정 잠김 메시지 설정
 
         def __call__(self, form, field):
-            print(f"User ID: {form.user_id.data}")
-            print(f"Password: {form.pwd.data}")
             # 검증 메서드
             user_id = form.user_id.data
             pwd = field.data
@@ -72,9 +72,9 @@ class BoardForm(FlaskForm):
     image_url = StringField("사진 주소")
 
     def validate_title(self, field):
-        if len(field.data) > (300//4):
+        if len(field.data) > (300 // 4):
             raise ValidationError("제목은 75자 이하여야 합니다.")
-        
+
     def validate_image_url(self, field):
         if len(field.data) > (300):
             raise ValidationError("사진 주소는 300자 이하여야 합니다.")
